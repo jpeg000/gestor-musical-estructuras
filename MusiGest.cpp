@@ -262,7 +262,7 @@ void reporteArtistas() {
                     if (alb->canciones != NULL) {
                         Canciones* c = alb->canciones;
                         while (c != NULL) {
-                            cout << "      * " << c->titulo << endl;
+                            cout << "      " << c->titulo << endl;
                             c = c->siguiente;
                         }
                     } else {
