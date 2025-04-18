@@ -244,6 +244,39 @@ void eliminarArtista(string ide){
         cout << "Artista eliminado correctamente." << endl;
     }
 }
+void reporteArtistas() {
+    if (primerA == NULL) {
+        cout << "No hay artistas registrados" << endl;
+    } else {
+        Artistas* temp = primerA;
+        while (temp != NULL) {
+            cout << "Nombre Real: " << temp->nombreReal << endl;
+            cout << "Alias: " << temp->nombreArtistico << endl;
+            cout << "País: " << temp->pais << endl;
+            cout << "Sello Discográfico: " << temp->selloDiscografico << endl;
+            if (temp->albumes != NULL) {
+                cout << "Álbumes:" << endl;
+                Albumes* alb = temp->albumes;
+                while (alb != NULL) {
+                    cout << alb->titulo << " (" << alb->year << ")" << endl;
+                    if (alb->canciones != NULL) {
+                        Canciones* c = alb->canciones;
+                        while (c != NULL) {
+                            cout << "      * " << c->titulo << endl;
+                            c = c->siguiente;
+                        }
+                    } else {
+                        cout <<"No hay canciones en este álbum" << endl;
+                    }
+                    alb = alb->siguiente;
+                }
+            } else {
+                cout << "No tiene álbumes registrados" << endl;
+            }
+            temp = temp->siguiente;
+        }
+    }
+}
 
 
 int main()
