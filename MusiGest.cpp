@@ -147,7 +147,7 @@ struct SellosDiscograficos {
         anterior = NULL;
         sublistaArtista = NULL;
     }
-};
+} *primerS;
 
 struct enlaceSellosArtistas {
 
