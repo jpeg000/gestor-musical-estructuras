@@ -143,7 +143,27 @@ struct SellosDiscograficos {
     }
 };
 
+// Métodos de artistas
+//insertar
+
+Artistas* buscarArtistas(string ide){
+    if (primerA == NULL){
+        return NULL;
+    }
+    Artistas* temp = primerA;
+    while (temp != NULL){
+        if (temp->id == ide){
+            return temp;
+        } else {
+            temp = temp->sig;
+        }
+    }
+    return NULL;
+}
+
+
 int main()
 {
     return 0;
 }
+
