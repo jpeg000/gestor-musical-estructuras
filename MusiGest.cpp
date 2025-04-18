@@ -208,19 +208,42 @@ struct Albumes *buscarAlbumes(string idArtista, string idAlbum) {
         temp = temp -> siguiente;
     }
 }
-GenerosMusicales* buscarGeneroMusical(string ide){
+struct GenerosMusicales* buscarGeneroMusical(string ide){
     if (primerG == NULL){
         return NULL;
     }
     GenerosMusicales* temp = primerG;
     do{
-        if (temp -> id = ide){
+        if (temp -> id == ide){
             return temp;
         }
         temp = temp -> siguiente;
     }while(temp != primerG);
     return NULL;
 }
+
+struct Canciones *buscarCancion(string idArtista, string idAlbum, string idCancion) {
+
+    struct Artistas *nodoArtista = buscarArtistas(idArtista);
+    struct Albumes *nodoAlbum = nodoArtista -> albumes;
+
+    if (nodoArtista == NULL) {
+        return NULL;
+    }
+
+    if (nodoAlbum == NULL) {
+        return NULL;
+    }
+
+    struct Canciones *temp = nodoArtista -> albumes -> canciones;
+
+    while (temp != NULL) {
+        if (temp -> id == idCancion) {
+            return temp;
+        }
+        temp = temp -> siguiente;
+    }
+};
 
 /* SELLO DISCOGRAFICO */
 void insertarSellosDiscográficos(string id, string nombre, string pais, int añoFund){
@@ -480,8 +503,8 @@ void eliminarAlbum(string idArtista, string idAlbum) {
         actual = actual -> siguiente;
     }
 }
-/*Generos Musicales*/
 
+/* GENEROS MUSICALES */
 void insertarGeneroMusical(string ID, string nombre, string descripcion) {
     GenerosMusicales* newGenre = new GenerosMusicales(ID, nombre, descripcion);
     if (primerG == NULL) {
@@ -542,6 +565,30 @@ void eliminarGeneroMusical(string ID) {
 }
 
 /* CANCIONES */
+
+void insertarCancion(string idArtista, string idAlbum, string idCancion, string titulo, int duracion, int year) {
+
+    struct Artistas *nodoArtista = buscarArtistas(idArtista);
+    struct Albumes *nodoAlbum = buscarAlbumes(idArtista, idAlbum);
+    struct Canciones *nodoCancion = buscarCancion(idArtista, idAlbum, idCancion);
+
+    if (nodoArtista == NULL) {
+        cout << "El artista con el ID " << idArtista << " no existe." << endl;
+        return;
+    }
+
+    if (nodoAlbum == NULL) {
+        cout << "El album con el ID " << idAlbum << " no existe." << endl;
+        return;
+    }
+
+    if (nodoCancion != NULL) {
+        cout << "La canción con el ID " << idCancion << " ya existe." << endl;
+        return;
+    }
+
+    //struct Canciones *nuevaCancion
+}
 
 int main(){
     return 0;
