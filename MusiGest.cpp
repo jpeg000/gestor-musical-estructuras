@@ -135,7 +135,7 @@ struct SellosDiscograficos {
     SellosDiscograficos *siguiente, *anterior;
 
     /* SUBLISTAS */
-    struct Canciones *canciones;
+    struct enlaceSellosArtista *sublistaArtista;
 
     /* CONSTRUCTOR */
     SellosDiscograficos(string idP, string nombreP, string paisP, int yearP) {
@@ -145,7 +145,19 @@ struct SellosDiscograficos {
         year = yearP;
         siguiente = NULL;
         anterior = NULL;
-        canciones = NULL;
+        sublistaArtista = NULL;
+    }
+};
+
+struct enlaceSellosArtistas {
+
+    enlaceSellosArtistas *siguiente;
+    struct Artistas *enlace;
+
+    /* CONSTRUCTOR */
+    enlaceSellosArtistas(struct Artistas *a) {
+        siguiente = NULL;
+        enlace = a;
     }
 };
 
