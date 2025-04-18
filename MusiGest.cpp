@@ -208,6 +208,19 @@ struct Albumes *buscarAlbumes(string idArtista, string idAlbum) {
         temp = temp -> siguiente;
     }
 }
+GenerosMusicales* buscarGeneroMusical(string ide){
+    if (primerG == NULL){
+        return NULL;
+    }
+    GenerosMusicales* temp = primerG;
+    do{
+        if (temp -> id = ide){
+            return temp;
+        }
+        temp = temp -> siguiente;
+    }while(temp != primerG);
+    return NULL;
+}
 
 /* SELLO DISCOGRAFICO */
 void insertarSellosDiscográficos(string id, string nombre, string pais, int añoFund){
