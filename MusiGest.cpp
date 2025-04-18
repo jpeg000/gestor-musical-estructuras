@@ -480,6 +480,66 @@ void eliminarAlbum(string idArtista, string idAlbum) {
         actual = actual -> siguiente;
     }
 }
+/*Generos Musicales*/
+
+void insertarGeneroMusical(string ID, string nombre, string descripcion) {
+    GenerosMusicales* newGenre = new GenerosMusicales(ID, nombre, descripcion);
+    if (primerG == NULL) {
+        primerG = newGenre;
+        newGenre->siguiente = primerG;
+        return;
+    }
+    GenerosMusicales* temp = primerG;
+    while (temp->siguiente != primerG) {
+        temp = temp->siguiente;
+    }
+    temp->siguiente = newGenre;
+    newGenre->siguiente = primerG;
+}
+
+void modificarDescripcionGeneroMusical(string ID, string descripcion) {
+    GenerosMusicales* generoMusical = buscarGeneroMusical(ID);
+    if (generoMusical == NULL) {
+        cout << "El género musical no está registrado" << endl;
+    } else {
+        generoMusical->descripcion = descripcion;
+    }
+}
+
+void eliminarGeneroMusical(string ID) {
+    GenerosMusicales* generoMusical = buscarGeneroMusical(ID);
+    if (generoMusical == NULL) {
+        cout << "El género musical no existe" << endl;
+    } else {
+        if (primerG->siguiente == primerG) {
+            delete primerG;
+            primerG = NULL;
+            cout << "Género musical eliminado" << endl;
+            return;
+        }
+        GenerosMusicales* actual = primerG;
+        GenerosMusicales* anterior = NULL;
+        do {
+            if (actual->id == ID) {
+                if (actual == primerG) {
+                    GenerosMusicales* ultimo = primerG;
+                    while (ultimo->siguiente != primerG) {
+                        ultimo = ultimo->siguiente;
+                    }
+                    primerG = primerG->siguiente;
+                    ultimo->siguiente = primerG;
+                } else {
+                    anterior->siguiente = actual->siguiente;
+                }
+                delete actual;
+                cout << "Género eliminado correctamente." << endl;
+                return;
+            }
+            anterior = actual;
+            actual = actual->siguiente;
+        } while (actual != primerG);
+    }
+}
 
 /* CANCIONES */
 
