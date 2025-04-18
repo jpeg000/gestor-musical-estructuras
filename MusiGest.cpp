@@ -57,6 +57,8 @@ struct Artistas {
         selloDiscografico = selloDisc;
         siguiente = NULL;
         anterior = NULL;
+        canciones = NULL;
+        albumes = NULL;
     }
 } *primerA;
 
@@ -78,6 +80,7 @@ struct Albumes {
         year = yearP;
         numeroCanciones = numCanc;
         siguiente = NULL;
+        canciones = NULL;
     }
 };
 
@@ -97,6 +100,7 @@ struct GenerosMusicales {
         nombre = nombreP;
         descripcion = desc;
         siguiente = NULL;
+        canciones = NULL;
     }
 } *primerG;
 
@@ -118,6 +122,7 @@ struct Playlist {
         creador = creadorP;
         fecha = fechaP;
         siguiente = NULL;
+        canciones = NULL;
     }
 } *primerP;
 
@@ -140,6 +145,7 @@ struct SellosDiscograficos {
         year = yearP;
         siguiente = NULL;
         anterior = NULL;
+        canciones = NULL;
     }
 };
 
