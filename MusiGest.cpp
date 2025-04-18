@@ -196,6 +196,56 @@ void insertarOrdenAlfabeticamente(string id, string nombreArt, string nombreReal
     temp -> siguiente = nuevoArtista;
 }
 
+
+void modificarNombreArtisticoDeArtista(string ide, string nombre){
+    Artistas* nodoArtista = buscarArtistas(ide);
+    if (nodoArtista == NULL){
+        cout << "El artista no existe" << endl;
+    } else {
+        nodoArtista->nombreArtistico = nombre;
+        cout << "Nombre artístico actualizado correctamente." << endl;
+    }
+}
+
+void modificarPaisDeArtista(string ide, string paisNuevo){
+    Artistas* nodoArtista = buscarArtistas(ide);
+    if (nodoArtista == NULL){
+        cout << "El artista no existe" << endl;
+    } else {
+        nodoArtista->pais = paisNuevo;
+        cout << "País actualizado correctamente." << endl;
+    }
+}
+
+void modificarSelloDiscograficoDeArtista(string ide, string selloDiscograficoN){
+    Artistas* nodoArtista = buscarArtistas(ide);
+    if (nodoArtista == NULL){
+        cout << "El artista no existe" << endl;
+    } else {
+        nodoArtista->selloDiscografico = selloDiscograficoN;
+        cout << "Sello discográfico actualizado correctamente." << endl;
+    }
+}
+
+void eliminarArtista(string ide){
+    Artistas* nodoArtista = buscarArtistas(ide);
+    if (nodoArtista == NULL){
+        cout << "El artista no existe" << endl;
+    } else {
+        if (nodoArtista->anterior != NULL){
+            nodoArtista->anterior->siguiente = nodoArtista->siguiente;
+        } else {
+            primerA = nodoArtista->siguiente;
+        }
+        if (nodoArtista->siguiente != NULL){
+            nodoArtista->siguiente->anterior = nodoArtista->anterior;
+        }
+        delete nodoArtista;
+        cout << "Artista eliminado correctamente." << endl;
+    }
+}
+
+
 int main()
 {
     return 0;
