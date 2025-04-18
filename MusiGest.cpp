@@ -143,9 +143,7 @@ struct SellosDiscograficos {
     }
 };
 
-// Métodos de artistas
-//insertar
-
+/* AUXILIARES */
 Artistas* buscarArtistas(string ide){
     if (primerA == NULL){
         return NULL;
@@ -155,15 +153,50 @@ Artistas* buscarArtistas(string ide){
         if (temp->id == ide){
             return temp;
         } else {
-            temp = temp->sig;
+            temp = temp -> siguiente;
         }
     }
     return NULL;
 }
 
+/* ARTISTAS */
+void insertarOrdenAlfabeticamente(string id, string nombreArt, string nombreReal, string pais, string selloDisc) {
+
+    if (buscarArtistas(id) != NULL) {
+        cout << "El artista con el ID " << id << " ya existe." << endl;
+        return;
+    }
+
+    struct Artistas *nuevoArtista = new Artistas(id, nombreArt, nombreReal, pais, selloDisc);
+
+    if (primerA == NULL) {
+        primerA = nuevoArtista;
+        return;
+    }
+
+    if (nombreArt < primerA -> nombreArtistico) {
+        nuevoArtista -> siguiente = primerA;
+        primerA -> anterior = nuevoArtista;
+        primerA = nuevoArtista;
+        return;
+    }
+
+    Artistas *temp = primerA;
+    while (temp -> siguiente != NULL && temp -> siguiente -> nombreArtistico < nombreArt) {
+        temp = temp -> siguiente;
+    }
+
+    nuevoArtista -> siguiente = temp -> siguiente;
+    nuevoArtista -> anterior = temp;
+
+    if (temp -> siguiente != NULL) {
+        temp -> siguiente -> anterior = nuevoArtista;
+    }
+
+    temp -> siguiente = nuevoArtista;
+}
 
 int main()
 {
     return 0;
 }
-
