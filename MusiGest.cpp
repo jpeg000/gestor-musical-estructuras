@@ -162,11 +162,11 @@ struct enlaceSellosArtistas {
 };
 
 /* AUXILIARES */
-Artistas* buscarArtistas(string ide){
+struct Artistas* buscarArtistas(string ide){
     if (primerA == NULL){
         return NULL;
     }
-    Artistas* temp = primerA;
+    struct Artistas* temp = primerA;
     while (temp != NULL){
         if (temp->id == ide){
             return temp;
@@ -176,22 +176,41 @@ Artistas* buscarArtistas(string ide){
     }
     return NULL;
 }
-SellosDiscograficos* buscarSellos(string ide) {
+
+struct SellosDiscograficos* buscarSellos(string ide) {
     if (primerS == NULL) {
         return NULL;
     }
-    SellosDiscograficos* temp = primerS;
+    struct SellosDiscograficos* temp = primerS;
     do {
-        if (temp->id == ide) { 
+        if (temp->id == ide) {
             return temp;
         }
         temp = temp->siguiente;
-    } while (temp != primerS); 
+    } while (temp != primerS);
     return NULL;
 }
 
-/*Sello discográfico*/
-void insertarSellosDiscográficos(string id,string nombre, int pais,int añoFund){
+struct Albumes *buscarAlbumes(string idArtista, string idAlbum) {
+
+    struct Artistas *nodoArtista = buscarArtistas(idArtista);
+
+    if (nodoArtista == NULL) {
+        return NULL;
+    }
+
+    struct Albumes *temp = nodoArtista -> albumes;
+
+    while (temp != NULL) {
+        if (temp -> titulo == idAlbum) {
+            return temp;
+        }
+        temp = temp -> siguiente;
+    }
+}
+
+/* SELLO DISCOGRAFICO */
+void insertarSellosDiscográficos(string id, string nombre, string pais, int añoFund){
     SellosDiscograficos* newSello = new SellosDiscograficos(id,nombre,pais,añoFund);
     if (primerS == NULL){
         primerS = newSello;
@@ -225,6 +244,7 @@ void modificarPaisdeSello(string ide,string newPais){
         cout << "País del sello discográfico modificado correctamente"<<endl;
     }
 }
+
 void eliminarSelloDiscografico(string ide) {
     SellosDiscograficos* selloDisc = buscarSellos(ide);
     if (selloDisc == NULL) {
@@ -240,7 +260,7 @@ void eliminarSelloDiscografico(string ide) {
         selloDisc->siguiente->anterior = selloDisc->anterior;
 
         if (selloDisc == primerS) {
-            primerS = selloDisc->siguiente; 
+            primerS = selloDisc->siguiente;
         }
         delete selloDisc;
     }
@@ -277,7 +297,6 @@ void insertarOrdenAlfabeticamente(string id, string nombreArt, string nombreReal
 
     temp -> siguiente = nuevoArtista;
 }
-
 
 void modificarNombreArtisticoDeArtista(string ide, string nombre){
     Artistas* nodoArtista = buscarArtistas(ide);
@@ -326,6 +345,7 @@ void eliminarArtista(string ide){
         cout << "Artista eliminado correctamente." << endl;
     }
 }
+
 void reporteArtistas() {
     if (primerA == NULL) {
         cout << "No hay artistas registrados" << endl;
@@ -360,7 +380,96 @@ void reporteArtistas() {
     }
 }
 
-int main()
-{
+/* ALBUMES */
+void insertarFinalAlbum(string idArtista, string idAlbum, string titulo, int year, int numCanciones) {
+
+    struct Artistas *nodoArtista = buscarArtistas(idArtista);
+
+    if (nodoArtista == NULL) {
+        cout << "El artista con el ID " << idArtista << " no existe." << endl;
+        return;
+    }
+
+    struct Albumes *nuevoAlbum = new Albumes(idAlbum, titulo, year, numCanciones);
+
+    if (nodoArtista -> albumes == NULL) {
+        nodoArtista -> albumes = nuevoAlbum;
+    }
+
+    else {
+        struct Albumes *temp = nodoArtista -> albumes;
+        while (temp -> siguiente != NULL) {
+            temp = temp -> siguiente;
+        }
+        temp -> siguiente = nuevoAlbum;
+    }
+
+    cout << "El albúm " << titulo << " se agregó existosamente al artista " <<
+        nodoArtista -> nombreArtistico << "." << endl;
+}
+
+void modificarTituloAlbum(string idArtista, string idAlbum, string tituloNuevo) {
+
+    struct Artistas *nodoArtista = buscarArtistas(idArtista);
+
+    if (nodoArtista == NULL) {
+        cout << "El artista con el ID " << idArtista << " no existe." << endl;
+        return;
+    }
+
+    struct Albumes *nodoAlbum = buscarAlbumes(idArtista, idAlbum);
+
+    if (nodoAlbum == NULL) {
+        cout << "El album con el ID " << idAlbum << " no existe." << endl;
+        return;
+    }
+
+    nodoAlbum -> titulo = tituloNuevo;
+    cout << "Se cambió el título del álbum correctamente." << endl;
+}
+
+void eliminarAlbum(string idArtista, string idAlbum) {
+
+    struct Artistas *nodoArtista = buscarArtistas(idArtista);
+
+    if (nodoArtista == NULL) {
+        cout << "El artista con el ID " << idArtista << " no existe." << endl;
+        return;
+    }
+
+    struct Albumes *nodoAlbum = buscarAlbumes(idArtista, idAlbum);
+
+    if (nodoAlbum == NULL) {
+        cout << "El album con el ID " << idAlbum << " no existe." << endl;
+        return;
+    }
+
+    struct Albumes *actual = nodoArtista -> albumes;
+    struct Albumes *anterior = NULL;
+
+    while (actual != NULL) {
+        if (actual -> id == idAlbum) {
+
+            if (anterior == NULL) {
+                nodoArtista -> albumes = actual -> siguiente;
+            }
+
+            else {
+                anterior -> siguiente = actual -> siguiente;
+            }
+
+            delete actual;
+            cout << "El albúm con el ID " << idAlbum << " se ha eliminado exitosamente " << endl;
+            return;
+        }
+
+        anterior = actual;
+        actual = actual -> siguiente;
+    }
+}
+
+/* CANCIONES */
+
+int main(){
     return 0;
 }
