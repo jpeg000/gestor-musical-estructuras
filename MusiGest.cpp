@@ -621,6 +621,53 @@ void modificarTituloCancion(string idArtista, string idAlbum, string idCancion, 
         << " exitosamente." << endl;
 }
 
+void eliminarCancion(string idArtista, string idAlbum, string idCancion) {
+
+    struct Artistas *nodoArtista = buscarArtistas(idArtista);
+
+    if (nodoArtista == NULL) {
+        cout << "El artista con el ID " << idArtista << " no existe." << endl;
+        return;
+    }
+
+    struct Albumes *nodoAlbum = buscarAlbumes(idArtista, idAlbum);
+
+    if (nodoAlbum == NULL) {
+        cout << "El album con el ID " << idAlbum << " no existe." << endl;
+        return;
+    }
+
+    struct Canciones *nodoCancion = buscarCancion(idArtista, idAlbum, idCancion);
+
+    if (nodoCancion == NULL) {
+        cout << "La canción con el ID " << idCancion << " no existe." << endl;
+        return;
+    }
+
+    struct Canciones *actual = nodoAlbum -> canciones;
+    struct Canciones *anterior = NULL;
+
+    while (actual != NULL) {
+        if (actual -> id == idCancion) {
+
+            if (anterior == NULL) {
+                nodoAlbum -> canciones = actual -> siguiente;
+            }
+
+            else {
+                anterior -> siguiente = actual -> siguiente;
+            }
+
+            delete actual;
+            cout << "La canción con el ID " << idCancion << " se ha eliminado correctamente." << endl;
+            return;
+        }
+
+        anterior = actual;
+        actual = actual -> siguiente;
+    }
+}
+
 int main() {
     return 0;
 }
