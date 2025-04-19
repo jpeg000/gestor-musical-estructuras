@@ -202,7 +202,7 @@ struct Albumes *buscarAlbumes(string idArtista, string idAlbum) {
     struct Albumes *temp = nodoArtista -> albumes;
 
     while (temp != NULL) {
-        if (temp -> titulo == idAlbum) {
+        if (temp -> id == idAlbum) {
             return temp;
         }
         temp = temp -> siguiente;
@@ -225,15 +225,12 @@ struct GenerosMusicales* buscarGeneroMusical(string ide){
 struct Canciones *buscarCancion(string idArtista, string idAlbum, string idCancion) {
 
     struct Artistas *nodoArtista = buscarArtistas(idArtista);
-    struct Albumes *nodoAlbum = nodoArtista -> albumes;
 
     if (nodoArtista == NULL) {
         return NULL;
     }
 
-    if (nodoAlbum == NULL) {
-        return NULL;
-    }
+    struct Albumes *nodoAlbum = nodoArtista -> albumes;
 
     struct Canciones *temp = nodoArtista -> albumes -> canciones;
 
@@ -246,8 +243,8 @@ struct Canciones *buscarCancion(string idArtista, string idAlbum, string idCanci
 };
 
 /* SELLO DISCOGRAFICO */
-void insertarSellosDiscográficos(string id, string nombre, string pais, int añoFund){
-    SellosDiscograficos* newSello = new SellosDiscograficos(id,nombre,pais,añoFund);
+void insertarSellosDiscograficos(string id, string nombre, string pais, int anoFund){
+    SellosDiscograficos* newSello = new SellosDiscograficos(id,nombre,pais,anoFund);
     if (primerS == NULL){
         primerS = newSello;
         newSello -> siguiente = newSello;
@@ -303,7 +300,7 @@ void eliminarSelloDiscografico(string ide) {
 }
 
 /* ARTISTAS */
-void insertarOrdenAlfabeticamente(string id, string nombreArt, string nombreReal, string pais, string selloDisc) {
+void insertarArtistaOrdenAlfabeticamente(string id, string nombreArt, string nombreReal, string pais, string selloDisc) {
     if (buscarArtistas(id) != NULL) {
         cout << "El artista con el ID " << id << " ya existe." << endl;
         return;
@@ -592,10 +589,38 @@ void insertarCancion(string idArtista, string idAlbum, string idCancion, string 
     nuevaCancion -> siguiente = nodoAlbum -> canciones;
     nodoAlbum -> canciones = nuevaCancion;
     nodoAlbum -> numeroCanciones++;
-    
+
     cout << "La canción " << titulo << " fue agregada correctamente al albúm con ID " << idAlbum << "." <<endl;
 }
 
-int main(){
+void modificarTituloCancion(string idArtista, string idAlbum, string idCancion, string nuevoTitulo) {
+
+    struct Artistas *nodoArtista = buscarArtistas(idArtista);
+    struct Albumes *nodoAlbum = buscarAlbumes(idArtista, idAlbum);
+    struct Canciones *nodoCancion = buscarCancion(idArtista, idAlbum, idCancion);
+
+    if (nodoArtista == NULL) {
+        cout << "El artista con el ID " << idArtista << " no existe." << endl;
+        return;
+    }
+
+    if (nodoAlbum == NULL) {
+        cout << "El album con el ID " << idAlbum << " no existe." << endl;
+        return;
+    }
+
+    if (nodoCancion == NULL) {
+        cout << "La canción con el ID " << idCancion << " no existe." << endl;
+        return;
+    }
+
+    string tituloAntiguo = nodoCancion -> titulo;
+    nodoCancion -> titulo = nuevoTitulo;
+
+    cout << "El titulo de la canción " << tituloAntiguo << " ha sido cambiada por " << nuevoTitulo
+        << " exitosamente." << endl;
+}
+
+int main() {
     return 0;
 }
