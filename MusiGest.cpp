@@ -198,15 +198,14 @@ struct Albumes *buscarAlbumes(string idArtista, string idAlbum) {
     if (nodoArtista == NULL) {
         return NULL;
     }
-
     struct Albumes *temp = nodoArtista -> albumes;
-
     while (temp != NULL) {
         if (temp -> id == idAlbum) {
             return temp;
         }
         temp = temp -> siguiente;
     }
+    return NULL;
 }
 struct GenerosMusicales* buscarGeneroMusical(string ide){
     if (primerG == NULL){
@@ -223,15 +222,11 @@ struct GenerosMusicales* buscarGeneroMusical(string ide){
 }
 
 struct Canciones *buscarCancion(string idArtista, string idAlbum, string idCancion) {
-
     struct Artistas *nodoArtista = buscarArtistas(idArtista);
-
     if (nodoArtista == NULL) {
         return NULL;
     }
-
     struct Albumes *nodoAlbum = nodoArtista -> albumes;
-
     struct Canciones *temp = nodoArtista -> albumes -> canciones;
 
     while (temp != NULL) {
@@ -240,7 +235,24 @@ struct Canciones *buscarCancion(string idArtista, string idAlbum, string idCanci
         }
         temp = temp -> siguiente;
     }
-};
+    return NULL;
+}
+
+struct Playlist* buscarPlaylist(string ide){
+    if (primerP == NULL){
+        cout << "No hay playlists registradas" << endl;
+        return NULL;
+    }
+    struct Playlist* temp = primerP;
+    while (temp != NULL){
+        if (temp->id == ide){
+            return temp;
+        }
+        temp = temp->siguiente; 
+    }
+    return NULL;
+}
+
 
 /* SELLO DISCOGRAFICO */
 void insertarSellosDiscograficos(string id, string nombre, string pais, int anoFund){
@@ -412,6 +424,30 @@ void reporteArtistas() {
         }
     }
 }
+void artistaMaxAlbumes() {
+    if (primerA == NULL) {
+        cout << "No hay artistas registrados" << endl;
+    } else {
+        Artistas* temp = primerA;
+        Artistas* artistaConMaxAlbumes = NULL;
+        int max = -1;
+        while (temp != NULL) {
+            int cont = 0;
+            Albumes* temp2 = temp->albumes;
+            while (temp2 != NULL) {
+                cont++;
+                temp2 = temp2->siguiente;
+            }
+            if (max < cont) {
+                max = cont;
+                artistaConMaxAlbumes = temp;
+            }
+            temp = temp->siguiente;
+        }
+        cout << "El artista con más álbumes es: " << artistaConMaxAlbumes->nombreArtistico << " (" << max << ")" << endl;
+    }
+}
+
 
 /* ALBUMES */
 void insertarFinalAlbum(string idArtista, string idAlbum, string titulo, int year, int numCanciones) {
@@ -500,7 +536,6 @@ void eliminarAlbum(string idArtista, string idAlbum) {
         actual = actual -> siguiente;
     }
 }
-
 /* GENEROS MUSICALES */
 void insertarGeneroMusical(string ID, string nombre, string descripcion) {
     GenerosMusicales* newGenre = new GenerosMusicales(ID, nombre, descripcion);
@@ -516,7 +551,6 @@ void insertarGeneroMusical(string ID, string nombre, string descripcion) {
     temp->siguiente = newGenre;
     newGenre->siguiente = primerG;
 }
-
 void modificarDescripcionGeneroMusical(string ID, string descripcion) {
     GenerosMusicales* generoMusical = buscarGeneroMusical(ID);
     if (generoMusical == NULL) {
@@ -525,7 +559,6 @@ void modificarDescripcionGeneroMusical(string ID, string descripcion) {
         generoMusical->descripcion = descripcion;
     }
 }
-
 void eliminarGeneroMusical(string ID) {
     GenerosMusicales* generoMusical = buscarGeneroMusical(ID);
     if (generoMusical == NULL) {
@@ -560,6 +593,32 @@ void eliminarGeneroMusical(string ID) {
         } while (actual != primerG);
     }
 }
+void generoMayorCanciones() {
+    if (primerG == NULL) {
+        cout << "No hay géneros registrados" << endl;
+    } else {
+        GenerosMusicales* temp = primerG;
+        GenerosMusicales* generoConMasCanciones = NULL;
+        int max = -1;
+        do {
+            int contador = 0;
+            Canciones* temp2 = temp->canciones;
+            while (temp2 != NULL) {
+                contador++;
+                temp2 = temp2->siguiente;
+            }
+            if (contador > max) {
+                max = contador;
+                generoConMasCanciones = temp;
+            }
+            temp = temp->siguiente;
+        } while (temp != primerG);
+        if (generoConMasCanciones != NULL) {
+            cout << "Género con más canciones: " << generoConMasCanciones -> nombre << " (" << max << " canciones)" << endl;
+        }
+    }
+}
+
 
 /* CANCIONES */
 
@@ -667,6 +726,60 @@ void eliminarCancion(string idArtista, string idAlbum, string idCancion) {
         actual = actual -> siguiente;
     }
 }
+/* Playlist*/
+void agregarPlaylist(string id,string nombre,string creador,int fecha){
+    struct Playlist* newPlaylist = new Playlist(id,nombre,creador,fecha);
+    if (primerP == NULL){
+        primerP = newPlaylist;
+        return;
+    }
+    newPlaylist -> siguiente = primerP;
+    primerP = newPlaylist;
+}
+
+void modificarNombrePlaylist(string id,string name){
+    struct Playlist* playlist = buscarPlaylist(id);
+    if (playlist == NULL){
+        cout << "La playlist no existe"<<endl;
+    }else{
+        playlist -> nombre = name;
+    }
+}
+void modificarCreadorPlaylist(string id, string creator){
+    struct Playlist *playlist = buscarPlaylist(id);
+    if (playlist == NULL){
+        cout << "La playlist no existe"<<endl;
+    }else{
+        playlist -> creador = creator;
+    }
+}
+
+void eliminarPlaylist(string id) {
+    Playlist* playlist = buscarPlaylist(id);
+    if (playlist == NULL) {
+        cout << "La playlist no existe" << endl;
+    } else {
+        Playlist* actual = primerP;
+        Playlist* anterior = NULL;
+
+        while (actual != NULL) {
+            if (actual->id == id) {
+                if (anterior == NULL) {
+                    primerP = actual->siguiente;
+                } else {
+                    anterior->siguiente = actual->siguiente;
+                }
+                delete actual;
+                cout << "Playlist eliminada correctamente." << endl;
+                return;
+            }
+            anterior = actual;
+            actual = actual->siguiente;
+        }
+    }
+}
+
+
 
 int main() {
     return 0;
