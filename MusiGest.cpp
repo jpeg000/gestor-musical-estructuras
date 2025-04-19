@@ -599,7 +599,7 @@ void generoMayorCanciones() {
     } else {
         GenerosMusicales* temp = primerG;
         GenerosMusicales* generoConMasCanciones = NULL;
-        int max = -1;
+        int max = 0;
         do {
             int contador = 0;
             Canciones* temp2 = temp->canciones;
@@ -615,6 +615,8 @@ void generoMayorCanciones() {
         } while (temp != primerG);
         if (generoConMasCanciones != NULL) {
             cout << "Género con más canciones: " << generoConMasCanciones -> nombre << " (" << max << " canciones)" << endl;
+        }else{
+            cout << "No hay canciones registradas en ningún género." << endl;
         }
     }
 }
