@@ -587,7 +587,13 @@ void insertarCancion(string idArtista, string idAlbum, string idCancion, string 
         return;
     }
 
-    //struct Canciones *nuevaCancion
+    struct Canciones *nuevaCancion = new Canciones(idCancion, titulo, duracion, year, idArtista, idAlbum);
+
+    nuevaCancion -> siguiente = nodoAlbum -> canciones;
+    nodoAlbum -> canciones = nuevaCancion;
+    nodoAlbum -> numeroCanciones++;
+    
+    cout << "La canción " << titulo << " fue agregada correctamente al albúm con ID " << idAlbum << "." <<endl;
 }
 
 int main(){
