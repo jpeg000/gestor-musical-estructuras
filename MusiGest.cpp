@@ -161,7 +161,11 @@ struct enlaceSellosArtistas {
     }
 };
 
-/* AUXILIARES */
+/*
+=========
+AUXILIARES
+=========
+*/
 struct Artistas* buscarArtistas(string ide){
     if (primerA == NULL){
         return NULL;
@@ -271,7 +275,11 @@ struct Playlist* buscarPlaylist(string ide){
 }
 
 
-/* SELLO DISCOGRAFICO */
+/*
+=========
+SELLO DISCOGRAFICO
+=========
+*/
 void insertarSellosDiscograficos(string id, string nombre, string pais, int anoFund){
     SellosDiscograficos* newSello = new SellosDiscograficos(id,nombre,pais,anoFund);
     if (primerS == NULL){
@@ -394,7 +402,11 @@ void eliminarArtistaDeSello(string idArtista, string idSelloDisc) {
     }
 }
 
-/* ARTISTAS */
+/*
+=========
+ARTISTAS
+=========
+*/
 void insertarArtistaOrdenAlfabeticamente(string id, string nombreArt, string nombreReal, string pais, string selloDisc) {
     if (buscarArtistas(id) != NULL) {
         cout << "El artista con el ID " << id << " ya existe." << endl;
@@ -486,7 +498,11 @@ void eliminarArtista(string ide){
     }
 }
 
-/* ALBUMES */
+/*
+=========
+ALBUMES
+=========
+*/
 void insertarFinalAlbum(string idArtista, string idAlbum, string titulo, int year, int numCanciones) {
 
     struct Artistas *nodoArtista = buscarArtistas(idArtista);
@@ -573,7 +589,11 @@ void eliminarAlbum(string idArtista, string idAlbum) {
         actual = actual -> siguiente;
     }
 }
-/* GENEROS MUSICALES */
+/*
+=========
+GENEROS MUSICALES
+=========
+*/
 void insertarGeneroMusical(string ID, string nombre, string descripcion) {
     GenerosMusicales* newGenre = new GenerosMusicales(ID, nombre, descripcion);
     if (primerG == NULL) {
@@ -633,8 +653,11 @@ void eliminarGeneroMusical(string ID) {
     }
 }
 
-/* CANCIONES */
-
+/*
+=========
+CANCIONES
+=========
+*/
 void insertarCancion(string idArtista, string idAlbum, string idCancion, string titulo, int duracion, int year) {
 
     struct Artistas *nodoArtista = buscarArtistas(idArtista);
@@ -739,7 +762,12 @@ void eliminarCancion(string idArtista, string idAlbum, string idCancion) {
         actual = actual -> siguiente;
     }
 }
-/* PLAYLIST */
+
+/*
+========
+PLAYLIST
+========
+*/
 void agregarPlaylist(string id,string nombre,string creador,int fecha){
     struct Playlist* newPlaylist = new Playlist(id,nombre,creador,fecha);
     if (primerP == NULL){
@@ -792,7 +820,11 @@ void eliminarPlaylist(string id) {
     }
 }
 
-//CONSULTAS
+/*
+=========
+CONSULTAS
+=========
+*/
 
 void generoMayorCanciones() {
     if (primerG == NULL) {
@@ -821,6 +853,7 @@ void generoMayorCanciones() {
         }
     }
 }
+
 void artistaMaxAlbumes() {
     if (primerA == NULL) {
         cout << "No hay artistas registrados" << endl;
@@ -848,6 +881,7 @@ void artistaMaxAlbumes() {
         }
     }
 }
+
 void cancionMasLarga() {
     Artistas* temp = primerA;
     Canciones* cancionMasL = NULL;
@@ -893,6 +927,7 @@ void cancionMasLarga() {
         cout << "No hay canciones registradas" << endl;
     }
 }
+
 void playlistMaxCanciones() {
     if (primerP == NULL) {
         cout << "No hay playlists registradas" << endl;
@@ -1016,7 +1051,7 @@ void albumesCantidadCanciones(int cantidad) {
                 cancion = cancion->siguiente;
             }
             if (cont == cantidad) {
-                cout << "El álbum \"" << album->titulo << "\" del artista \"" 
+                cout << "El álbum \"" << album->titulo << "\" del artista \""
                      << artistas->nombreArtistico << "\" tiene " << cantidad << " canciones." << endl;
                 hayCanciones = true;
             }
@@ -1030,7 +1065,11 @@ void albumesCantidadCanciones(int cantidad) {
     }
 }
 
-/*REPORTES*/
+/*
+========
+REPORTES
+========
+*/
 
 void imprimirListaArtistas() {
     if (primerA == NULL) {
@@ -1080,9 +1119,9 @@ void imprimirCanciones() {
         while (album != NULL) {
             Canciones *cancion = album->canciones;
             while (cancion != NULL) {
-                cout << "Canción: \"" << cancion->titulo << "\" | Artista: \"" 
-                     << artista->nombreArtistico << "\" | Álbum: \"" << album->titulo 
-                     << "\" | Año: " << cancion->year << " | Duración: " 
+                cout << "Canción: \"" << cancion->titulo << "\" | Artista: \""
+                     << artista->nombreArtistico << "\" | Álbum: \"" << album->titulo
+                     << "\" | Año: " << cancion->year << " | Duración: "
                      << cancion->duracion << "s" << endl;
                 cancion = cancion->siguiente;
             }
@@ -1162,7 +1201,7 @@ void imprimirSellosDiscograficos() {
             enlaceSellosArtistas *artistaEnlace = sello->sublistaArtista;
             cout << "Artistas asociados a este sello:" << endl;
             while (artistaEnlace != NULL) {
-                cout << "    Nombre del artista: " << artistaEnlace->enlace->nombreReal 
+                cout << "    Nombre del artista: " << artistaEnlace->enlace->nombreReal
                      << " (alias: " << artistaEnlace->enlace->nombreArtistico << ")" << endl;
                 artistaEnlace = artistaEnlace->siguiente;
             }
@@ -1172,6 +1211,14 @@ void imprimirSellosDiscograficos() {
         cout << "--------------------------------------" << endl;
         sello = sello->siguiente;
     }
+}
+
+void imprimirListasPrincipales() {
+    imprimirListaArtistas();
+    imprimirListaAlbumes();
+    imprimirListaGenerosMusicales();
+    imprimirListaPlaylists();
+    imprimirSellosDiscograficos();
 }
 
 void reporteArtistas() {
@@ -1284,21 +1331,356 @@ void imprimirAlbumesConCancionesOrdenadasPorDuracion() {
     }
 }
 
+/*
+====================
+VALIDACIÓN DE INPUTS
+====================
+*/
 
+/*
+Inputs para Menú de Mantenimiento
+*/
 
+/*
+- Canciones
+*/
 
+void inputInsertarCancion() {
+    string idArtista, idAlbum, idCancion, titulo;
+    int duracion, year;
+    bool validarDuracion, validarYear = false;
 
+    cout << "Ingrese el ID del artista: " << endl;
+    cin >> idArtista;
 
+    cout << "Ingrese el ID del álbum: " << endl;
+    cin >> idAlbum;
 
-/*MENÚ*/
-void menuGeneral() {
+    cout << "Ingrese un ID para la canción: " << endl;
+    cin >> idCancion;
+
+    cout << "Ingrese el título para la canción: " << endl;
+    cin.ignore();
+    getline(cin, titulo);
+
+    while (!validarDuracion) {
+        cout << "Ingrese la duración de la canción (en segundos): ";
+        cin >> duracion;
+
+        if (duracion > 0) {
+            validarDuracion = true;
+        }
+
+        else {
+            cout << "Inválido. Ingrese una duración mayor a 0 segundos." << endl;
+            cout << "Intente nuevamente." << endl;
+        }
+    }
+
+    while (!validarYear) {
+        cout << "Ingrese el año de publicación de la canción: ";
+        cin >> year;
+
+        if (year > 0) {
+            validarYear = true;
+        }
+
+        else {
+            cout << "Inválido. Ingrese un número positivo" << endl;
+            cout << "Intente nuevamente." << endl;
+        }
+    }
+
+    insertarCancion(idArtista, idAlbum, idCancion, titulo, duracion, year);
+    cout << endl;
+}
+
+void inputModificarTituloCancion() {
+    string idArtista, idAlbum, idCancion, nuevoTitulo;
+
+    cout << "Ingrese el ID del artista: ";
+    cin >> idArtista;
+
+    cout << "Ingrese el ID del album: ";
+    cin >> idAlbum;
+
+    cout << "Ingrese el ID de la canción a modificar: ";
+    cin >> idCancion;
+
+    cout << "Ingrese el nuevo título de la canción: ";
+    cin.ignore();
+    getline(cin, nuevoTitulo);
+
+    modificarTituloCancion(idArtista, idAlbum, idCancion, nuevoTitulo);
+    cout << endl;
+}
+
+void inputEliminarCancion() {
+    string idArtista, idAlbum, idCancion;
+
+    cout << "Ingrese el ID del artista: ";
+    cin >> idArtista;
+
+    cout << "Ingrese el ID del album: ";
+    cin >> idAlbum;
+
+    cout << "Ingrese el ID de la canción a eliminar: ";
+    cin >> idCancion;
+
+    eliminarCancion(idArtista, idAlbum, idCancion);
+    cout << endl;
+}
+
+/*
+Inputs para Menú de Consulta
+*/
+void inputCancionesPublicadasYear() {
+    int input = 0;
+    bool validacion = false;
+
+    while (!validacion) {
+        cout << "Ingrese un año: ";
+        cin >> input;
+        cout << endl;
+
+        if (input >= 0) {
+            validacion = true;
+        }
+
+        else {
+            cout << "Inválido. Solo se permiten números positivos." << endl;
+            cout << "Intente nuevamente." << endl;
+        }
+    }
+
+    cancionesPublicadasYear(input);
+}
+
+void inputAlbumesCantidadCanciones() {
+    int input = 0;
+    bool validacion = false;
+
+    while (!validacion) {
+        cout << "Ingrese un número: ";
+        cin >> input;
+        cout << endl;
+
+        if (input >= 0) {
+            validacion = true;
+        }
+
+        else {
+            cout << "Inválido. Solo se permiten números positivos." << endl;
+            cout << "Intente nuevamente." << endl;
+        }
+    }
+
+    albumesCantidadCanciones(input);
+}
+
+/*
+========
+MENÚS
+========
+*/
+
+void menuCanciones() {
     bool salir = false;
-
-    cout << "=== Bienvenido al Menú General De MusiGest ===" << endl;
 
     while (!salir) {
         int opcion = 0;
 
+        cout << endl << "=== Menú De Mantenimiento - Canciones ===" << endl;
+        cout << "1. Insertar una canción" << endl;
+        cout << "2. Modificar el título de una canción" << endl;
+        cout << "3. Eliminar una canción existente" << endl;
+        cout << "4. Regresar al Menu De Mantenimiento" << endl;
+        cout << "Ingrese una opción: ";
+        cin >> opcion;
+        cout << endl;
+
+        switch (opcion) {
+
+        }
+
+    }
+}
+
+void menuArtistas() {
+    bool salir = false;
+
+    while (!salir) {
+        int opcion = 0;
+
+        cout << endl << "=== Menú De Mantenimiento - Artistas ===" << endl;
+    }
+}
+
+void menuAlbumes() {
+    bool salir = false;
+
+    while (!salir) {
+        int opcion = 0;
+
+        cout << endl << "=== Menú De Mantenimiento - Albúmes ===" << endl;
+    }
+}
+
+void menuGenerosMusicales() {
+    bool salir = false;
+
+
+    while (!salir) {
+        int opcion = 0;
+
+        cout << endl << "=== Menú De Mantenimiento - Generos Musicales ===" << endl;
+    }
+}
+
+void menuPlaylists() {
+    bool salir = false;
+
+    while (!salir) {
+        int opcion = 0;
+
+        cout << endl << "=== Menú De Mantenimiento - Playlists ===" << endl;
+    }
+}
+
+void menuSellosDiscograficos() {
+    bool salir = false;
+
+    while (!salir) {
+        int opcion = 0;
+
+        cout << endl << "=== Menú De Mantenimiento - Sellos Discograficos ===" << endl;
+    }
+}
+
+void menuMantenimiento() {
+    bool salir = false;
+
+    while (!salir) {
+        int opcion = 0;
+
+        cout << endl << "=== Menú De Mantenimiento ===" << endl;
+        cout << "1. Canciones" << endl;
+        cout << "2. Artistas" << endl;
+        cout << "3. Álbumes" << endl;
+        cout << "4. Géneros Musicales" << endl;
+        cout << "5. Playlists" << endl;
+        cout << "6. Sellos Discográficos" << endl;
+        cout << "7. Regresar al Menú General" << endl;
+        cout << "Ingrese una opción: ";
+        cin >> opcion;
+        cout << endl;
+
+        switch (opcion) {
+            case 1: menuCanciones(); break;
+
+            case 2: menuArtistas(); break;
+
+            case 3: menuAlbumes(); break;
+
+            case 4: menuGenerosMusicales(); break;
+
+            case 5: menuPlaylists(); break;
+
+            case 6: menuSellosDiscograficos(); break;
+
+            case 7: salir = true; break;
+
+            default: cout << "Instrucción inválida. Intente nuevamente." << endl;
+        }
+    }
+}
+
+void menuConsultas() {
+    bool salir = false;
+
+    while (!salir) {
+        int opcion = 0;
+
+        cout << endl << "=== Menú De Consultas ===" << endl;
+        cout << "1. Genero Musical con más canciones" << endl;
+        cout << "2. Artista con más albúmes publicados" << endl;
+        cout << "3. Canción con mayor duración" << endl;
+        cout << "4. Playlist con más canciones" << endl;
+        cout << "5. Álbumes por cada artista" << endl;
+        cout << "6. Sello Discográfico con más artistas" << endl;
+        cout << "7. Canciones publicadas en un año específico" << endl;
+        cout << "8. Álbumes que superan cierto número de canciones" << endl;
+        cout << "9. Regresar al Menú General" << endl;
+        cout << "Ingrese una opción: ";
+        cin >> opcion;
+        cout << endl;
+
+        switch (opcion) {
+            case 1: generoMayorCanciones(); break;
+
+            case 2: artistaMaxAlbumes(); break;
+
+            case 3: cancionMasLarga(); break;
+
+            case 4: playlistMaxCanciones(); break;
+
+            case 5: albumesPorArtista(); break;
+
+            case 6: selloDiscograficoConMasArtistas(); break;
+
+            case 7: inputCancionesPublicadasYear(); break;
+
+            case 8: inputAlbumesCantidadCanciones(); break;
+
+            case 9: salir = true; break;
+
+            default: cout << "Instrucción inválida. Intente nuevamente." << endl;
+        }
+    }
+}
+
+void menuReportes() {
+    bool salir = false;
+
+    while (!salir) {
+        int opcion = 0;
+
+        cout << endl << "=== Menú De Reportes ===" << endl;
+        cout << "1. Imprimir todas las listas principales" << endl;
+        cout << "2. Reporte detallado de cada artista" << endl;
+        cout << "3. Lista de todas las playlists con sus canciones" << endl;
+        cout << "4. Álbumes con canciones ordenadas por duración" << endl;
+        cout << "5. Sellos discográficos con sus artistas firmados" << endl;
+        cout << "6. Regresar al Menú General" << endl;
+        cout << "Ingrese una opción: ";
+        cin >> opcion;
+        cout << endl;
+
+        switch (opcion) {
+            case 1: imprimirListaArtistas(); break;
+
+            case 2: imprimirListasPrincipales(); break;
+
+            case 3: imprimirListaPlaylists(); break;
+
+            case 4: imprimirAlbumesConCancionesOrdenadasPorDuracion(); break;
+
+            case 5: imprimirSellosDiscograficos(); break;
+
+            case 6: salir = true; break;
+
+            default: cout << "Instrucción inválida. Intente nuevamente." << endl;
+        }
+    }
+}
+
+void menuGeneral() {
+    bool salir = false;
+
+    while (!salir) {
+        int opcion = 0;
+
+        cout << endl << "=== Bienvenido al Menú General De MusiGest ===" << endl;
         cout << "1. Mantenimiento" << endl;
         cout << "2. Consultas" << endl;
         cout << "3. Reportes" << endl;
@@ -1308,20 +1690,11 @@ void menuGeneral() {
         cout << endl;
 
         switch (opcion) {
-            case 1: {
-                menuMantenimiento();
-                break;
-            }
+            case 1: menuMantenimiento(); break;
 
-            case 2: {
-                menuConsultas();
-                break;
-            }
+            case 2: menuConsultas(); break;
 
-            case 3: {
-                menuReportes();
-                break;
-            }
+            case 3: menuReportes(); break;
 
             case 4: {
                 cout << "-- Se ha salido del programa exitosamente --" << endl;
@@ -1329,14 +1702,10 @@ void menuGeneral() {
                 break;
             }
 
-            default: {
-                cout << "Instrucción inválida. Intente nuevamente." << endl;
-                break;
-            }
+            default: cout << "Instrucción inválida. Intente nuevamente." << endl;
         }
     }
 }
-
 
 int main() {
     menuGeneral();
