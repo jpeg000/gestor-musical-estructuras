@@ -1207,57 +1207,83 @@ void reporteArtistas() {
         }
     }
 }
+/*QUICKSORT para ordenamiento*/
+Canciones* concat(Canciones* a, Canciones* b) {
+    if (a == NULL) return b;
+    Canciones* temp = a;
+    while (temp->siguiente != NULL) {
+        temp = temp->siguiente;
+    }
+    temp->siguiente = b;
+    return a;
+}
+
+Canciones* quicksortCanciones(Canciones* head) {
+    if (head == NULL || head->siguiente == NULL) {
+        return head;
+    }
+
+    int pivot = head->duracion;
+
+    Canciones* menores = NULL;
+    Canciones* iguales = NULL;
+    Canciones* mayores = NULL;
+
+    Canciones* temp = head;
+    while (temp != NULL) {
+        Canciones* nuevo = new Canciones(*temp); // Copia del nodo
+        nuevo->siguiente = NULL;
+
+        if (nuevo->duracion < pivot) {
+            nuevo->siguiente = menores;
+            menores = nuevo;
+        } else if (nuevo->duracion == pivot) {
+            nuevo->siguiente = iguales;
+            iguales = nuevo;
+        } else {
+            nuevo->siguiente = mayores;
+            mayores = nuevo;
+        }
+        temp = temp->siguiente;
+    }
+
+    menores = quicksortCanciones(menores);
+    mayores = quicksortCanciones(mayores);
+
+    Canciones* res = concat(menores, iguales);
+    res = concat(res, mayores);
+    return res;
+}
 
 void imprimirAlbumesConCancionesOrdenadasPorDuracion() {
     if (primerA == NULL) {
         cout << "No hay artistas registrados, por lo tanto no hay álbumes." << endl;
         return;
     }
-
     Artistas *artista = primerA;
     while (artista != NULL) {
         Albumes *album = artista->albumes;
         while (album != NULL) {
             cout << "Álbum: " << album->titulo << " (" << album->year << "), Artista: " << artista->nombreArtistico << endl;
-
-            Canciones *ordenadas = NULL;
-            Canciones *actual = album->canciones;
-
-            while (actual != NULL) {
-                Canciones *nuevo = new Canciones(*actual); 
-                nuevo->siguiente = NULL;
-
-                if (ordenadas == NULL || nuevo->duracion < ordenadas->duracion) {
-                    nuevo->siguiente = ordenadas;
-                    ordenadas = nuevo;
-                } else {
-                    Canciones *temp = ordenadas;
-                    while (temp->siguiente != NULL && temp->siguiente->duracion < nuevo->duracion) {
-                        temp = temp->siguiente;
-                    }
-                    nuevo->siguiente = temp->siguiente;
-                    temp->siguiente = nuevo;
-                }
-                actual = actual->siguiente;
-            }
-
+            Canciones *ordenadas = quicksortCanciones(album->canciones);
             Canciones *c = ordenadas;
             while (c != NULL) {
                 cout << "  - " << c->titulo << " (" << c->duracion << " minutos)" << endl;
                 c = c->siguiente;
             }
+
             while (ordenadas != NULL) {
                 Canciones *temp = ordenadas;
                 ordenadas = ordenadas->siguiente;
                 delete temp;
             }
-
             cout << "-----------------------------------" << endl;
             album = album->siguiente;
         }
         artista = artista->siguiente;
     }
 }
+
 
 
 
@@ -1316,4 +1342,3 @@ int main() {
     menuGeneral();
     return 0;
 }
-
