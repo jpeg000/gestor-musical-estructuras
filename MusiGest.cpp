@@ -411,11 +411,20 @@ ARTISTAS
 =========
 */
 void insertarArtistaOrdenAlfabeticamente(string id, string nombreArt, string nombreReal, string pais, string selloDisc) {
-    if (buscarArtistas(id) != NULL) {
+    struct Artistas *existeArtista = buscarArtistas(id);
+    struct SellosDiscograficos *nodoSello = buscarSelloPorNombre(selloDisc);
+
+    if (existeArtista != NULL) {
         cout << "El artista con el ID " << id << " ya existe." << endl;
         return;
     }
+    if (nodoSello == NULL){
+        cout << "El sello con el nombre" << selloDisc << " no existe." << endl;
+        return;
+    }
+
     struct Artistas *nuevoArtista = new Artistas(id, nombreArt, nombreReal, pais, selloDisc);
+
     if (primerA == NULL) {
         primerA = nuevoArtista;
         return;
@@ -439,6 +448,8 @@ void insertarArtistaOrdenAlfabeticamente(string id, string nombreArt, string nom
     }
 
     temp -> siguiente = nuevoArtista;
+
+    insertarArtistaEnSello(id, nodoSello -> id);
 }
 
 void modificarNombreArtisticoDeArtista(string ide, string nombre){
