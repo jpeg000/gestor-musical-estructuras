@@ -519,35 +519,6 @@ void reporteArtistas() {
         }
     }
 }
-
-void artistaMaxAlbumes() {
-    if (primerA == NULL) {
-        cout << "No hay artistas registrados" << endl;
-    } else {
-        Artistas* temp = primerA;
-        Artistas* artistaConMaxAlbumes = NULL;
-        int max = 0;
-        while (temp != NULL) {
-            int cont = 0;
-            Albumes* temp2 = temp->albumes;
-            while (temp2 != NULL) {
-                cont++;
-                temp2 = temp2->siguiente;
-            }
-            if (max < cont) {
-                max = cont;
-                artistaConMaxAlbumes = temp;
-            }
-            temp = temp->siguiente;
-        }
-        if (artistaConMaxAlbumes != NULL){
-        cout << "El artista con más álbumes es: " << artistaConMaxAlbumes->nombreArtistico << " (" << max << ")" << endl;
-        }else{
-            cout << "Ningun artista tiene canciones registradas"<<endl;
-        }
-    }
-}
-
 /* ALBUMES */
 void insertarFinalAlbum(string idArtista, string idAlbum, string titulo, int year, int numCanciones) {
 
@@ -695,34 +666,6 @@ void eliminarGeneroMusical(string ID) {
     }
 }
 
-void generoMayorCanciones() {
-    if (primerG == NULL) {
-        cout << "No hay géneros registrados" << endl;
-    } else {
-        GenerosMusicales* temp = primerG;
-        GenerosMusicales* generoConMasCanciones = NULL;
-        int max = 0;
-        do {
-            int contador = 0;
-            Canciones* temp2 = temp->canciones;
-            while (temp2 != NULL) {
-                contador++;
-                temp2 = temp2->siguiente;
-            }
-            if (contador > max) {
-                max = contador;
-                generoConMasCanciones = temp;
-            }
-            temp = temp->siguiente;
-        } while (temp != primerG);
-        if (generoConMasCanciones != NULL) {
-            cout << "Género con más canciones: " << generoConMasCanciones -> nombre << " (" << max << " canciones)" << endl;
-        }else{
-            cout << "No hay canciones registradas en ningún género." << endl;
-        }
-    }
-}
-
 /* CANCIONES */
 
 void insertarCancion(string idArtista, string idAlbum, string idCancion, string titulo, int duracion, int year) {
@@ -829,53 +772,6 @@ void eliminarCancion(string idArtista, string idAlbum, string idCancion) {
         actual = actual -> siguiente;
     }
 }
-
-void cancionMasLarga() {
-    Artistas* temp = primerA;
-    Canciones* cancionMasL = NULL;
-    int maxTiempo = 0;
-    while (temp != NULL) {
-        Albumes* album = temp->albumes;
-        while (album != NULL) {
-            Canciones* cancion = album->canciones;
-            while (cancion != NULL) {
-                if (cancion->duracion > maxTiempo) {
-                    maxTiempo = cancion->duracion;
-                    cancionMasL = cancion;
-                }
-                cancion = cancion->siguiente;
-            }
-            album = album->siguiente;
-        }
-        Canciones* singles = temp->canciones;
-        while (singles != NULL) {
-            if (singles->duracion > maxTiempo) {
-                maxTiempo = singles->duracion;
-                cancionMasL = singles;
-            }
-            singles = singles->siguiente;
-        }
-        temp = temp->siguiente;
-    }
-    GenerosMusicales* temp2 = primerG;
-    while (temp2 != NULL) {
-        Canciones* cancion = temp2->canciones;
-        while (cancion != NULL) {
-            if (cancion->duracion > maxTiempo) {
-                maxTiempo = cancion->duracion;
-                cancionMasL = cancion;
-            }
-            cancion = cancion->siguiente;
-        }
-        temp2 = temp2->siguiente;
-    }
-    if (cancionMasL != NULL) {
-        cout << "La canción con más duración es: " << cancionMasL->titulo << " (" << maxTiempo << ")" << endl;
-    } else {
-        cout << "No hay canciones registradas" << endl;
-    }
-}
-
 /* PLAYLIST */
 void agregarPlaylist(string id,string nombre,string creador,int fecha){
     struct Playlist* newPlaylist = new Playlist(id,nombre,creador,fecha);
@@ -929,6 +825,107 @@ void eliminarPlaylist(string id) {
     }
 }
 
+//CONSULTAS
+
+void generoMayorCanciones() {
+    if (primerG == NULL) {
+        cout << "No hay géneros registrados" << endl;
+    } else {
+        GenerosMusicales* temp = primerG;
+        GenerosMusicales* generoConMasCanciones = NULL;
+        int max = 0;
+        do {
+            int contador = 0;
+            Canciones* temp2 = temp->canciones;
+            while (temp2 != NULL) {
+                contador++;
+                temp2 = temp2->siguiente;
+            }
+            if (contador > max) {
+                max = contador;
+                generoConMasCanciones = temp;
+            }
+            temp = temp->siguiente;
+        } while (temp != primerG);
+        if (generoConMasCanciones != NULL) {
+            cout << "Género con más canciones: " << generoConMasCanciones -> nombre << " (" << max << " canciones)" << endl;
+        }else{
+            cout << "No hay canciones registradas en ningún género." << endl;
+        }
+    }
+}
+void artistaMaxAlbumes() {
+    if (primerA == NULL) {
+        cout << "No hay artistas registrados" << endl;
+    } else {
+        Artistas* temp = primerA;
+        Artistas* artistaConMaxAlbumes = NULL;
+        int max = 0;
+        while (temp != NULL) {
+            int cont = 0;
+            Albumes* temp2 = temp->albumes;
+            while (temp2 != NULL) {
+                cont++;
+                temp2 = temp2->siguiente;
+            }
+            if (max < cont) {
+                max = cont;
+                artistaConMaxAlbumes = temp;
+            }
+            temp = temp->siguiente;
+        }
+        if (artistaConMaxAlbumes != NULL){
+        cout << "El artista con más álbumes es: " << artistaConMaxAlbumes->nombreArtistico << " (" << max << ")" << endl;
+        }else{
+            cout << "Ningun artista tiene canciones registradas"<<endl;
+        }
+    }
+}
+void cancionMasLarga() {
+    Artistas* temp = primerA;
+    Canciones* cancionMasL = NULL;
+    int maxTiempo = 0;
+    while (temp != NULL) {
+        Albumes* album = temp->albumes;
+        while (album != NULL) {
+            Canciones* cancion = album->canciones;
+            while (cancion != NULL) {
+                if (cancion->duracion > maxTiempo) {
+                    maxTiempo = cancion->duracion;
+                    cancionMasL = cancion;
+                }
+                cancion = cancion->siguiente;
+            }
+            album = album->siguiente;
+        }
+        Canciones* singles = temp->canciones;
+        while (singles != NULL) {
+            if (singles->duracion > maxTiempo) {
+                maxTiempo = singles->duracion;
+                cancionMasL = singles;
+            }
+            singles = singles->siguiente;
+        }
+        temp = temp->siguiente;
+    }
+    GenerosMusicales* temp2 = primerG;
+    while (temp2 != NULL) {
+        Canciones* cancion = temp2->canciones;
+        while (cancion != NULL) {
+            if (cancion->duracion > maxTiempo) {
+                maxTiempo = cancion->duracion;
+                cancionMasL = cancion;
+            }
+            cancion = cancion->siguiente;
+        }
+        temp2 = temp2->siguiente;
+    }
+    if (cancionMasL != NULL) {
+        cout << "La canción con más duración es: " << cancionMasL->titulo << " (" << maxTiempo << ")" << endl;
+    } else {
+        cout << "No hay canciones registradas" << endl;
+    }
+}
 void playlistMaxCanciones() {
     if (primerP == NULL) {
         cout << "No hay playlists registradas" << endl;
@@ -958,7 +955,119 @@ void playlistMaxCanciones() {
     }
 }
 
+void albumesPorArtista(){
+    if (primerA == NULL){
+        cout << "No hay artistas registrados"<<endl;
+        return;
+    }
+    Artistas *artista = primerA;
+    while (artista != NULL){
+        int cont = 0;
+        Albumes *temp = artista -> albumes;
+        while (temp != NULL){
+            cont++;
+            temp = temp -> siguiente;
+        }
+        cout << artista ->nombreArtistico << "tiene " << cont << "álbumes registrados"<<endl;
+        artista = artista -> siguiente;
+    }
+}
+
+void selloDiscograficoConMasArtistas() {
+    if (primerS == NULL) {
+        cout << "No hay sellos discográficos registrados" << endl;
+        return;
+    }
+
+    SellosDiscograficos *selloDiscografico = primerS;
+    SellosDiscograficos *selloDiscMaxArtistas = NULL;
+    int max = 0;
+
+    while (selloDiscografico != NULL) {
+        int contador = 0;
+        enlaceSellosArtistas *enlace = selloDiscografico->sublistaArtista;
+        while (enlace != NULL) {
+            contador++;
+            enlace = enlace->siguiente;
+        }
+        if (contador > max) {
+            max = contador;
+            selloDiscMaxArtistas = selloDiscografico;
+        }
+        selloDiscografico = selloDiscografico->siguiente;
+    }
+
+    if (selloDiscMaxArtistas != NULL) {
+        cout << "El sello discográfico con más artistas firmados es "
+             << selloDiscMaxArtistas->nombre << " (" << max << " artistas)" << endl;
+    }
+}
+
+void cancionesPublicadasYear(int year1) {
+    if (primerA == NULL) {
+        cout << "No hay artistas registrados, por lo tanto no hay canciones" << endl;
+        return;
+    }
+    Artistas *artistas = primerA;
+    bool hayCanciones = false;
+
+    while (artistas != NULL) {
+        Albumes *album = artistas->albumes;
+        while (album != NULL) {
+            Canciones *cancion = album->canciones;
+            while (cancion != NULL) {
+                if (cancion->year == year1) {
+                    hayCanciones = true;
+                    cout << "La canción \"" << cancion->titulo << "\" del artista \"" << artistas->nombreArtistico << "\" es del año " << year1 << "." << endl;
+                }
+                cancion = cancion->siguiente;
+            }
+            album = album->siguiente;
+        }
+        artistas = artistas->siguiente;
+    }
+    if (!hayCanciones) {
+        cout << "No se encontraron canciones del año " << year1 << "." << endl;
+    }
+}
+
+void albumesCantidadCanciones(int cantidad) {
+    if (primerA == NULL) {
+        cout << "No hay artistas registrados, por lo tanto no hay canciones" << endl;
+        return;
+    }
+    Artistas *artistas = primerA;
+    bool hayCanciones = false;
+
+    while (artistas != NULL) {
+        Albumes *album = artistas->albumes;
+        while (album != NULL) {
+            int cont = 0;
+            Canciones *cancion = album->canciones;
+            while (cancion != NULL) {
+                cont++;
+                cancion = cancion->siguiente;
+            }
+            if (cont == cantidad) {
+                cout << "El álbum \"" << album->titulo << "\" del artista \"" 
+                     << artistas->nombreArtistico << "\" tiene " << cantidad << " canciones." << endl;
+                hayCanciones = true;
+            }
+            album = album->siguiente;
+        }
+        artistas = artistas->siguiente;
+    }
+
+    if (!hayCanciones) {
+        cout << "No hay álbumes con " << cantidad << " canciones." << endl;
+    }
+}
+
+
+
+
+
+
 int main() {
     return 0;
 }
-
