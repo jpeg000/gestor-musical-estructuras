@@ -248,6 +248,9 @@ struct Canciones *buscarCancion(string idArtista, string idAlbum, string idCanci
         return NULL;
     }
     struct Albumes *nodoAlbum = nodoArtista -> albumes;
+    if (nodoAlbum == NULL) {
+        return NULL;
+    }
     struct Canciones *temp = nodoArtista -> albumes -> canciones;
 
     while (temp != NULL) {
