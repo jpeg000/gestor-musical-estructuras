@@ -1243,7 +1243,7 @@ void imprimirAlbumesConCancionesOrdenadasPorDuracion() {
 
             Canciones *c = ordenadas;
             while (c != NULL) {
-                cout << "  - " << c->titulo << " (" << c->duracion << " mins)" << endl;
+                cout << "  - " << c->titulo << " (" << c->duracion << " minutos)" << endl;
                 c = c->siguiente;
             }
             while (ordenadas != NULL) {
@@ -1260,59 +1260,3 @@ void imprimirAlbumesConCancionesOrdenadasPorDuracion() {
 }
 
 
-
-
-
-
-/*MENÚ*/
-void menuGeneral() {
-    bool salir = false;
-
-    cout << "=== Bienvenido al Menú General De MusiGest ===" << endl;
-
-    while (!salir) {
-        int opcion = 0;
-
-        cout << "1. Mantenimiento" << endl;
-        cout << "2. Consultas" << endl;
-        cout << "3. Reportes" << endl;
-        cout << "4. Salir del Programa" << endl;
-        cout << "Ingrese una opción: ";
-        cin >> opcion;
-        cout << endl;
-
-        switch (opcion) {
-            case 1: {
-                menuMantenimiento();
-                break;
-            }
-
-            case 2: {
-                menuConsultas();
-                break;
-            }
-
-            case 3: {
-                menuReportes();
-                break;
-            }
-
-            case 4: {
-                cout << "-- Se ha salido del programa exitosamente --" << endl;
-                salir = true;
-                break;
-            }
-
-            default: {
-                cout << "Instrucción inválida. Intente nuevamente." << endl;
-                break;
-            }
-        }
-    }
-}
-
-
-int main() {
-    menuGeneral();
-    return 0;
-}
