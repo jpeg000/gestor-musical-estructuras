@@ -161,7 +161,11 @@ struct enlaceSellosArtistas {
     }
 };
 
-/* AUXILIARES */
+/*
+==========
+AUXILIARES
+==========
+*/
 struct Artistas* buscarArtistas(string ide){
     if (primerA == NULL){
         return NULL;
@@ -271,7 +275,11 @@ struct Playlist* buscarPlaylist(string ide){
 }
 
 
-/* SELLO DISCOGRAFICO */
+/*
+==================
+SELLO DISCOGRAFICO
+==================
+*/
 void insertarSellosDiscograficos(string id, string nombre, string pais, int anoFund){
     SellosDiscograficos* newSello = new SellosDiscograficos(id,nombre,pais,anoFund);
     if (primerS == NULL){
@@ -394,7 +402,11 @@ void eliminarArtistaDeSello(string idArtista, string idSelloDisc) {
     }
 }
 
-/* ARTISTAS */
+/*
+========
+ARTISTAS
+========
+*/
 void insertarArtistaOrdenAlfabeticamente(string id, string nombreArt, string nombreReal, string pais, string selloDisc) {
     if (buscarArtistas(id) != NULL) {
         cout << "El artista con el ID " << id << " ya existe." << endl;
@@ -519,7 +531,12 @@ void reporteArtistas() {
         }
     }
 }
-/* ALBUMES */
+
+/*
+=======
+ALBUMES
+=======
+*/
 void insertarFinalAlbum(string idArtista, string idAlbum, string titulo, int year, int numCanciones) {
 
     struct Artistas *nodoArtista = buscarArtistas(idArtista);
@@ -606,7 +623,12 @@ void eliminarAlbum(string idArtista, string idAlbum) {
         actual = actual -> siguiente;
     }
 }
-/* GENEROS MUSICALES */
+
+/*
+=================
+GENEROS MUSICALES
+=================
+*/
 void insertarGeneroMusical(string ID, string nombre, string descripcion) {
     GenerosMusicales* newGenre = new GenerosMusicales(ID, nombre, descripcion);
     if (primerG == NULL) {
@@ -666,8 +688,11 @@ void eliminarGeneroMusical(string ID) {
     }
 }
 
-/* CANCIONES */
-
+/*
+=========
+CANCIONES
+=========
+*/
 void insertarCancion(string idArtista, string idAlbum, string idCancion, string titulo, int duracion, int year) {
 
     struct Artistas *nodoArtista = buscarArtistas(idArtista);
@@ -772,7 +797,12 @@ void eliminarCancion(string idArtista, string idAlbum, string idCancion) {
         actual = actual -> siguiente;
     }
 }
-/* PLAYLIST */
+
+/*
+=========
+PLAYLISTS
+=========
+*/
 void agregarPlaylist(string id,string nombre,string creador,int fecha){
     struct Playlist* newPlaylist = new Playlist(id,nombre,creador,fecha);
     if (primerP == NULL){
@@ -825,7 +855,11 @@ void eliminarPlaylist(string id) {
     }
 }
 
-//CONSULTAS
+/*
+=========
+CONSULTAS
+=========
+*/
 
 void generoMayorCanciones() {
     if (primerG == NULL) {
@@ -854,6 +888,7 @@ void generoMayorCanciones() {
         }
     }
 }
+
 void artistaMaxAlbumes() {
     if (primerA == NULL) {
         cout << "No hay artistas registrados" << endl;
@@ -881,6 +916,7 @@ void artistaMaxAlbumes() {
         }
     }
 }
+
 void cancionMasLarga() {
     Artistas* temp = primerA;
     Canciones* cancionMasL = NULL;
@@ -926,6 +962,7 @@ void cancionMasLarga() {
         cout << "No hay canciones registradas" << endl;
     }
 }
+
 void playlistMaxCanciones() {
     if (primerP == NULL) {
         cout << "No hay playlists registradas" << endl;
@@ -1063,10 +1100,221 @@ void albumesCantidadCanciones(int cantidad) {
     }
 }
 
+/*
+========
+MENÚS
+========
+*/
+
+void menuCanciones() {
+    bool salir = false;
+
+    cout << "=== Menú De Mantenimiento - Canciones ===" << endl;
+
+    while (!salir) {
+        int opcion = 0;
 
 
+    }
+}
+
+void menuArtistas() {
+    bool salir = false;
+
+    cout << "=== Menú De Mantenimiento - Artistas ===" << endl;
+
+    while (!salir) {
+        int opcion = 0;
 
 
+    }
+}
+
+void menuAlbumes() {
+    bool salir = false;
+
+    cout << "=== Menú De Mantenimiento - Albúmes ===" << endl;
+
+    while (!salir) {
+        int opcion = 0;
+
+
+    }
+}
+
+void menuGenerosMusicales() {
+    bool salir = false;
+
+    cout << "=== Menú De Mantenimiento - Generos Musicales ===" << endl;
+
+    while (!salir) {
+        int opcion = 0;
+
+
+    }
+}
+
+void menuPlaylists() {
+    bool salir = false;
+
+    cout << "=== Menú De Mantenimiento - Playlists ===" << endl;
+
+    while (!salir) {
+        int opcion = 0;
+
+
+    }
+}
+
+void menuSellosDiscograficos() {
+    bool salir = false;
+
+    cout << "=== Menú De Mantenimiento - Sellos Discograficos ===" << endl;
+
+    while (!salir) {
+        int opcion = 0;
+
+
+    }
+}
+
+void menuMantenimiento() {
+    bool salir = false;
+
+    cout << "=== Menú De Mantenimiento ===" << endl;
+
+    while (!salir) {
+        int opcion = 0;
+
+        cout << "1. Canciones" << endl;
+        cout << "2. Artistas" << endl;
+        cout << "3. Álbumes" << endl;
+        cout << "4. Géneros Musicales" << endl;
+        cout << "5. Playlists" << endl;
+        cout << "6. Sellos Discográficos" << endl;
+        cout << "7. Regresar al Menú General" << endl;
+        cout << "Ingrese una opción: ";
+        cin >> opcion;
+        cout << endl;
+
+        switch (opcion) {
+            case 1: {
+                menuCanciones();
+                break;
+            }
+
+            case 2: {
+                menuArtistas();
+                break;
+            }
+
+            case 3: {
+                menuAlbumes();
+                break;
+            }
+
+            case 4: {
+                menuGenerosMusicales();
+                break;
+            }
+
+            case 5: {
+                menuPlaylists();
+                break;
+            }
+
+            case 6: {
+                menuSellosDiscograficos();
+                break;
+            }
+
+            case 7: {
+                menuGeneral();
+                break;
+            }
+
+            default: {
+                cout << "Instrucción inválida. Intente nuevamente." << endl;
+                break;
+            }
+        }
+    }
+}
+
+void menuConsultas() {
+    bool salir = false;
+
+    cout << "=== Menú De Consultas ===" << endl;
+
+    while (!salir) {
+        int opcion = 0;
+
+
+    }
+}
+
+void menuReportes() {
+    bool salir = false;
+
+    cout << "=== Menú De Reportes ===" << endl;
+
+    while (!salir) {
+        int opcion = 0;
+
+
+    }
+}
+
+void menuGeneral() {
+    bool salir = false;
+
+    cout << "=== Bienvenido al Menú General De MusiGest ===" << endl;
+
+    while (!salir) {
+        int opcion = 0;
+
+        cout << "1. Mantenimiento" << endl;
+        cout << "2. Consultas" << endl;
+        cout << "3. Reportes" << endl;
+        cout << "4. Salir del Programa" << endl;
+        cout << "Ingrese una opción: ";
+        cin >> opcion;
+        cout << endl;
+
+        switch (opcion) {
+            case 1: {
+                menuMantenimiento();
+                break;
+            }
+
+            case 2: {
+                menuConsultas();
+                break;
+            }
+
+            case 3: {
+                menuReportes();
+                break;
+            }
+
+            case 4: {
+                cout << "-- Se ha salido del programa exitosamente --" << endl;
+                salir = true;
+                break;
+            }
+
+            default: {
+                cout << "Instrucción inválida. Intente nuevamente." << endl;
+                break;
+            }
+        }
+    }
+}
+
+int main() {
+    menuGeneral();
+    return 0;
+}
 
 int main() {
     return 0;
