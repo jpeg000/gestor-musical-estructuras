@@ -1503,7 +1503,15 @@ void menuCanciones() {
         cout << endl;
 
         switch (opcion) {
+            case 1: inputInsertarCancion(); break;
 
+            case 2: inputModificarTituloCancion(); break;
+
+            case 3: inputEliminarCancion(); break;
+
+            case 4: salir = true; break;
+
+            default: cout << "Instrucción inválida. Intente nuevamente." << endl;
         }
 
     }
