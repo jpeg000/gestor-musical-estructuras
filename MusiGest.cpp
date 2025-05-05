@@ -1,5 +1,4 @@
 #include <iostream>
-#include <limits>
 using namespace std;
 
 /*  Fecha de Inicio: 17/4/2025
@@ -277,21 +276,6 @@ struct Playlist* buscarPlaylist(string ide){
     return NULL;
 }
 
-bool validNum(int& num) {
-    while (true) {
-        //Función para validar que un numéro entero no contenga caracteres.
-        if (cin >> num) {
-            //Si la entrada es válida entonces es correcto.
-            return true;
-        } else {
-            cout << "Entrada inválida. Por favor, ingrese un número válido." << endl;
-            cin.clear();
-            //Se limpia el estado de error del cin, para permitir más entradas.
-            // Ignoramos todos los caracteres restantes en el buffer hasta el salto de línea ('\n'),
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        }
-    }
-}
 
 /*
 =========
@@ -300,22 +284,24 @@ SELLO DISCOGRAFICO
 */
 void insertarSellosDiscograficos(string id, string nombre, string pais, int anoFund){
     if (buscarSelloPorNombre(nombre) != NULL){
-        cout << "El nombre de este sello ya existe"<<endl;
+        cout << "El nombre de este sello ya existe" << endl;
         return;
     }
-    SellosDiscograficos* newSello = new SellosDiscograficos(id,nombre,pais,anoFund);
+    SellosDiscograficos* newSello = new SellosDiscograficos(id, nombre, pais, anoFund);
     if (primerS == NULL){
         primerS = newSello;
-        newSello -> siguiente = newSello;
-        newSello -> anterior = newSello;
-    }else{
-        SellosDiscograficos* temp = primerS -> anterior;
-        temp -> siguiente = newSello;
-        newSello -> anterior = temp;
-        newSello -> siguiente = primerS;
-        primerS -> anterior = newSello;
+        newSello->siguiente = newSello;
+        newSello->anterior = newSello;
+    } else {
+        SellosDiscograficos* temp = primerS->anterior;
+        temp->siguiente = newSello;
+        newSello->anterior = temp;
+        newSello->siguiente = primerS;
+        primerS->anterior = newSello;
     }
+    cout << "Sello discográfico agregado correctamente." << endl;
 }
+
 
 void modificarNombredeSello(string ide,string newNombre){
     SellosDiscograficos* SelloDisc = buscarSellos(ide);
@@ -1702,7 +1688,7 @@ void inputInsertarAlbum(){
 
     cout << "Ingrese el año de lanzamiento del album: ";
     cin >> year;
-    if (!validNum(year) || year <= 0){
+    if (year <= 0){
         cout << "El año es inválido, intente nuevamente"<<endl;
     }
 
@@ -1803,12 +1789,12 @@ void inputInsertarSelloDiscografico(){
 
     cout << "Ingrese el año de fundación: ";
     cin >> year;
-    if (year <= 0 || !validNum(year)){
+    if (year <= 0){
         cout << "El año ingresado es inválido, intente de nuevo"<<endl;
     }
 
-    insertarSellosDiscograficos(id,nombre,pais,añoFundacion);
-    cout << endl;
+    insertarSellosDiscograficos(id,nombre,pais,year);
+    
 }
 
 void inputModificarNombredeSello(){
