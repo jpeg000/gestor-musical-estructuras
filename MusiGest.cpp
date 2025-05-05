@@ -2293,7 +2293,68 @@ void menuGeneral() {
     }
 }
 
+
+void cargarDatos(){
+    insertarSellosDiscograficos("SEL001", "Epic Records", "Estados Unidos", 1955);
+    insertarSellosDiscograficos("SEL002", "Atlantic Records", "Estados Unidos", 1947);
+    insertarSellosDiscograficos("SEL003", "Interscope Records", "Estados Unidos", 1984);
+    insertarSellosDiscograficos("SEL004", "Warner Music", "Estados Unidos", 1958);
+    insertarSellosDiscograficos("SEL005","Lench Mob Records","Estados Unidos", 1994);
+    
+    
+    insertarArtistaOrdenAlfabeticamente("234512","Michael Jackson", "Michael Jackson", "Estados Unidos","Epic Records");
+    insertarArtistaOrdenAlfabeticamente("234517", "Bruno Mars", "Peter Gene Hernandez", "Estados Unidos", "Atlantic Records");
+    insertarArtistaOrdenAlfabeticamente("234518", "Billie Eilish", "Billie Eilish Pirate Baird O'Connell", "Estados Unidos", "Interscope Records");
+    insertarArtistaOrdenAlfabeticamente("234519", "Ice Cube", "O'Shea Jackson", "Estados Unidos", "Lench Mob Records");
+    insertarArtistaOrdenAlfabeticamente("234520", "Dua Lipa", "Dua Lipa", "Reino Unido", "Warner Music");
+
+    insertarFinalAlbum("234512", "ALB006", "Thriller", 1982, 9);
+    insertarFinalAlbum("234517", "ALB001", "24K Magic", 2016, 9);
+    insertarFinalAlbum("234518", "ALB005", "Happier Than Ever", 2021, 16);
+    insertarFinalAlbum("234519", "ALB003", "The Predator", 1992, 16);
+    insertarFinalAlbum("234520", "ALB004", "Future Nostalgia", 2020, 11);
+
+    // Insertar canciones para el álbum Thriller de Michael Jackson
+    string idArtista = "234512";
+    insertarCancion(idArtista, "ALB006", "THR01", "Wanna Be Startin' Somethin'", 362, 1982);
+    insertarCancion(idArtista, "ALB006", "THR02", "Thriller", 357, 1982);
+    insertarCancion(idArtista, "ALB006", "THR03", "Beat It", 258, 1982);
+
+// Insertar canciones para el álbum Happier Than Ever de Billie Eilish
+    idArtista = "234518";
+    insertarCancion(idArtista, "ALB005", "HTE01", "Getting Older", 240, 2021);
+    insertarCancion(idArtista, "ALB005", "HTE02", "Billie Bossa Nova", 181, 2021);
+    insertarCancion(idArtista, "ALB005", "HTE03", "Happier Than Ever", 298, 2021);
+
+// Insertar canciones para el álbum 24K Magic de Bruno Mars
+    idArtista = "234517";
+    insertarCancion(idArtista, "ALB001", "24K01", "24K Magic", 227, 2016);
+    insertarCancion(idArtista, "ALB001", "24K02", "That's What I Like", 187, 2016);
+    insertarCancion(idArtista, "ALB001", "24K03", "Versace on the Floor", 271, 2016);
+
+// Insertar canciones para el álbum The Predator de Ice Cube
+    idArtista = "234519";
+    insertarCancion(idArtista, "ALB003", "PRD01", "It Was a Good Day", 269, 1992);
+    insertarCancion(idArtista, "ALB003", "PRD02", "Check Yo Self", 231, 1992);
+    insertarCancion(idArtista, "ALB003", "PRD03", "Wicked", 219, 1992);
+
+// Insertar canciones para el álbum Future Nostalgia de Dua Lipa
+    idArtista = "234520";
+    insertarCancion(idArtista, "ALB004", "FUT01", "Don't Start Now", 183, 2020);
+    insertarCancion(idArtista, "ALB004", "FUT02", "Levitating", 203, 2020);
+    insertarCancion(idArtista, "ALB004", "FUT03", "Physical", 193, 2020);
+
+    insertarGeneroMusical("HIP", "Hip Hop", "Cultura musical urbana que incluye rap y beatboxing.");
+    insertarGeneroMusical("ROCK", "Rock", "Género musical caracterizado por el uso de guitarras eléctricas y una fuerte base rítmica.");
+    insertarGeneroMusical("POP", "Pop", "Música popular con melodías pegajosas.");
+
+    agregarPlaylist("PL004", "Relax & Chill", "Usuario D", 20230502);
+    agregarPlaylist("PL005", "Rap & Hip Hop", "Usuario E", 20230501);
+
+}
+
 int main() {
+    cargarDatos();
     menuGeneral();
     return 0;
 }
