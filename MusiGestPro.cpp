@@ -657,7 +657,7 @@ void insertarFinalAlbum(string idArtista, string idAlbum, string titulo, int yea
         return;
     }
     // Verificar si el álbum ya está registrado en el artista.
-    if (buscarAlbumes(idArtista, idAlbum)) {
+    if (buscarAlbumes(idArtista, idAlbum) != NULL) {
         cout << "El álbum ya está registrado en el artista." << endl;
         return;
     }
@@ -1589,8 +1589,8 @@ void selloDiscograficoConMasArtistas() {
     SellosDiscograficos *selloDiscMaxArtistas = NULL;
     int max = 0;
 
-    // Recorrer todos los sellos discográficos
-    while (selloDiscografico != NULL) {
+    // Recorrer todos los sellos discográficos en una lista doble y circular
+    do {
         int contador = 0;
         enlaceSellosArtistas *enlace = selloDiscografico->sublistaArtista;
 
@@ -1607,13 +1607,15 @@ void selloDiscograficoConMasArtistas() {
         }
 
         selloDiscografico = selloDiscografico->siguiente;
-    }
+    } while (selloDiscografico != primerS);
 
     // Mostrar el sello con más artistas si existe
     if (selloDiscMaxArtistas != NULL) {
-        cout << "El sello discográfico con más artistas firmados es "<< selloDiscMaxArtistas->nombre << " (" << max << " artistas)" << endl;
+        cout << "El sello discográfico con más artistas firmados es "
+             << selloDiscMaxArtistas->nombre << " (" << max << " artistas)" << endl;
     }
 }
+
 /*
 Busca y muestra todas las canciones publicadas en un año específico.
 Recibe como parámetro el año de lanzamiento (year1).
