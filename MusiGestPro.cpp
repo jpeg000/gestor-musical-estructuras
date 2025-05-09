@@ -677,7 +677,7 @@ void insertarFinalAlbum(string idArtista, string idAlbum, string titulo, int yea
         return;
     }
     if (buscarAlbumesPorNombre(idArtista,titulo) != NULL){
-        cout << "El título del album ya está registrado en el artista"<<endl;
+        cout << "El título del album ya está registrado en el artista"<<endl;   
     }
 
     // Crear el nuevo álbum.
