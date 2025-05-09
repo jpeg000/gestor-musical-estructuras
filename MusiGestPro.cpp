@@ -3,7 +3,6 @@
 using namespace std;
 
 /*  Fecha de Inicio: 17/4/2025
-    Última modificación: 7/5/2025
     Integrantes:
     - Jose Pablo Avendaño Zúñiga
     - José Andres Villegas Murillo
@@ -265,6 +264,34 @@ struct Albumes* buscarAlbumes(string idArtista, string idAlbum) {
     }
     return NULL; // El álbum no está en la lista del artista.
 }
+/*
+Buscar un álbum específico en la lista de álbumes de un artista.
+Recibe el ID del artista y el título del álbum a buscar.
+Si encuentra el álbum, devuelve un puntero al nodo correspondiente.
+Si no lo encuentra o el artista no existe, devuelve NULL.
+*/
+struct Albumes* buscarAlbumesPorNombre(string idArtista, string nombre) {
+    // Buscar el artista por su ID
+    struct Artistas* nodoArtista = buscarArtistas(idArtista);
+    // Si el artista no existe, retornar NULL
+    if (nodoArtista == NULL) {
+        return NULL;
+    }
+    // Inicializar el puntero para recorrer la lista de álbumes del artista
+    struct Albumes* temp = nodoArtista->albumes;
+    // Recorrer la lista de álbumes
+    while (temp != NULL) {
+        // Verificar si el título del álbum coincide con el nombre buscado
+        if (temp->titulo == nombre) {
+            return temp; // Retornar el nodo del álbum encontrado
+        }
+        // Avanzar al siguiente álbum en la lista
+        temp = temp->siguiente;
+    }
+    // Si no se encuentra el álbum, retornar NULL
+    return NULL;
+}
+
 
 /*
 Buscar un género musical específico en la lista circular de géneros musicales.
@@ -451,50 +478,38 @@ Si la canción ya existe en el álbum, muestra un mensaje indicando que la canci
 Si la duración o el año de la canción es negativo, solicita nuevamente los datos hasta que sean válidos.
 Las canciones se añaden al inicio de la lista de canciones del álbum.
 */ 
-
-
 void insertarCancion(string idArtista, string idAlbum) {
-    // Buscar el artista por su ID
     Artistas* nodoArtista = buscarArtistas(idArtista);
-    // Buscar el álbum dentro del artista
     Albumes* nodoAlbum = buscarAlbumes(idArtista, idAlbum);
 
-    // Verificar si el artista existe
     if (nodoArtista == NULL) {
         cout << "El artista con el ID " << idArtista << " no existe." << endl;
         return;
     }
 
-    // Verificar si el álbum existe
     if (nodoAlbum == NULL) {
         cout << "El álbum con el ID " << idAlbum << " no existe." << endl;
         return;
     }
 
-    int cont = 0; // Inicialización correcta del contador
     string idCancion, titulo;
     int duracion, year;
+    char continuar;
 
-    // Pedir canciones hasta alcanzar el número requerido en el álbum
-    while (cont < nodoAlbum->numeroCanciones) {
-        cout << "Ingrese el ID de la canción: " << endl;
-        // Leer el ID de la canción, permitiendo espacios en blanco
+    do {
+        cout << "Ingrese el ID de la canción: ";
         getline(cin >> ws, idCancion);
 
-        // Verificar si la canción ya existe en el álbum
         Canciones* nodoCancion = buscarCancion(idArtista, idAlbum, idCancion);
         if (nodoCancion != NULL) {
             cout << "La canción con el ID " << idCancion << " ya existe en este álbum." << endl;
-            continue; // Solicitar otra canción
+            continue;
         }
 
-        // Pedir el título de la canción
-        cout << "Ingrese el título de la canción: " << endl;
-        // Leer el título, permitiendo espacios en blanco
+        cout << "Ingrese el título de la canción: ";
         getline(cin >> ws, titulo);
 
-        // Pedir la duración de la canción (solo números enteros positivos)
-        cout << "Ingrese la duración de la canción (en segundos): " << endl;
+        cout << "Ingrese la duración de la canción (en segundos): ";
         while (true) {
             cin >> duracion;
             if (cin.fail() || duracion < 0) {
@@ -507,8 +522,7 @@ void insertarCancion(string idArtista, string idAlbum) {
             }
         }
 
-        // Pedir el año de la canción (solo números enteros positivos)
-        cout << "Ingrese el año de la canción: " << endl;
+        cout << "Ingrese el año de la canción: ";
         while (true) {
             cin >> year;
             if (cin.fail() || year < 0) {
@@ -521,20 +535,20 @@ void insertarCancion(string idArtista, string idAlbum) {
             }
         }
 
-        // Crear un nuevo nodo para la canción
         Canciones* nuevaCancion = new Canciones(idCancion, titulo, duracion, year, idArtista, idAlbum);
         nuevaCancion->siguiente = nodoAlbum->canciones;
         nodoAlbum->canciones = nuevaCancion;
+        nodoAlbum->numeroCanciones++;
 
         cout << "La canción \"" << titulo << "\" fue agregada correctamente al álbum con ID " << idAlbum << "." << endl;
 
-        // Incrementar el contador para la siguiente canción
-        cont++;
-    }
-    cout << "¡Canciones agregadas exitosamente!"<<endl;
+        cout << "¿Desea agregar otra canción? (s/n): ";
+        cin >> continuar;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    } while (continuar == 's' || continuar == 'S');
+
+    cout << "¡Canciones agregadas exitosamente!" << endl;
 }
-
-
 
 /*
 Modifica el título de una canción existente dentro de un álbum de un artista.
@@ -661,6 +675,9 @@ void insertarFinalAlbum(string idArtista, string idAlbum, string titulo, int yea
     if (buscarAlbumes(idArtista, idAlbum) != NULL) {
         cout << "El álbum ya está registrado en el artista." << endl;
         return;
+    }
+    if (buscarAlbumesPorNombre(idArtista,titulo) != NULL){
+        cout << "El título del album ya está registrado en el artista"<<endl;
     }
 
     // Crear el nuevo álbum.
@@ -1054,35 +1071,43 @@ Si el sello no es único, actualiza los punteros de los nodos adyacentes para ma
 Se eliminan los artistas pertenecientes al sello.
 */
 void eliminarSelloDiscografico(string ide) {
-    SellosDiscograficos* selloDisc = buscarSellos(ide); // Buscar el sello por su ID.
-    if (selloDisc == NULL) { // Si el sello no existe, muestra un mensaje de error.
+    SellosDiscograficos* selloDisc = buscarSellos(ide); 
+    if (selloDisc == NULL) {
         cout << "El sello discográfico no está registrado" << endl;
         return;
     }
-    // Eliminar todos los artistas asociados al sello.
-    Artistas* artistaActual = primerA;
-    while (artistaActual != NULL) {
-        Artistas* siguienteArtista = artistaActual->siguiente;
-        if (artistaActual->selloDiscografico == ide) {
-            eliminarArtista(artistaActual->id);
-        }
-        artistaActual = siguienteArtista;
-    }
 
-    // Si el sello es el único en la lista, eliminarlo y poner la lista vacía.
+    // Eliminar todos los enlaces de artistas asociados al sello
+    enlaceSellosArtistas* artistaEnlace = selloDisc->sublistaArtista;
+    while (artistaEnlace != NULL) {
+        enlaceSellosArtistas* siguienteEnlace = artistaEnlace->siguiente; 
+        eliminarArtista(artistaEnlace->enlace->id);
+        artistaEnlace = siguienteEnlace;
+    }
+    selloDisc->sublistaArtista = NULL;
+
+    // Si el sello es el único en la lista circular doble
     if (selloDisc->siguiente == selloDisc && selloDisc->anterior == selloDisc) {
         delete selloDisc;
         primerS = NULL;
-    } else { // Si hay más sellos, eliminar el sello y actualizar los punteros de la lista.
-        selloDisc->anterior->siguiente = selloDisc->siguiente;
-        selloDisc->siguiente->anterior = selloDisc->anterior;
-        if (selloDisc == primerS) { // Si el sello a eliminar es el primero, actualizar primerS.
-            primerS = selloDisc->siguiente;
-        }
-
-        delete selloDisc; // Eliminar el nodo del sello.
+        cout << "Sello discográfico eliminado correctamente." << endl;
+        return;
     }
 
+    // Actualizar el puntero `primerS` si el sello eliminado es el primero
+    if (selloDisc == primerS) {
+        primerS = selloDisc->siguiente;
+    }
+
+    // Reconectar los punteros de la lista doble circular
+    selloDisc->anterior->siguiente = selloDisc->siguiente;
+    selloDisc->siguiente->anterior = selloDisc->anterior;
+
+    // Asegurar la desconexión de los punteros antes de eliminar
+    selloDisc->siguiente = NULL;
+    selloDisc->anterior = NULL;
+
+    delete selloDisc;
     cout << "Sello discográfico eliminado correctamente." << endl;
 }
 
@@ -1112,7 +1137,7 @@ void insertarGeneroMusical(string ID, string nombre, string descripcion) {
 
     // Comprobar si el género ya está registrado por su ID.
     if (buscarGeneroMusical(ID) != NULL) {
-        cout << "El género musical ya está registrado" << endl;
+        cout << "El género musical ya está registrado." << endl;
         return;
     }
 
@@ -1131,6 +1156,7 @@ void insertarGeneroMusical(string ID, string nombre, string descripcion) {
     // Insertar el nuevo género al final de la lista y hacerla circular.
     temp->siguiente = newGenre;
     newGenre->siguiente = primerG; // El último género apunta al primer género.
+    cout << "¡Género musical insertado correctamente!"<<endl;
 }
 
 
@@ -1144,9 +1170,10 @@ void modificarDescripcionGeneroMusical(string ID, string descripcion) {
     GenerosMusicales* generoMusical = buscarGeneroMusical(ID); // Buscar el género musical por su ID.
 
     if (generoMusical == NULL) { // Verificar si el género no existe.
-        cout << "El género musical no está registrado" << endl; // Mostrar error si no se encuentra el género.
+        cout << "El género musical no está registrado." << endl; // Mostrar error si no se encuentra el género.
     } else { 
         generoMusical->descripcion = descripcion; // Actualizar la descripción del género.
+        cout << "¡Descripción modificada correctamente!"<<endl;
     }
 }
 /*
@@ -1228,6 +1255,7 @@ void agregarPlaylist(string id, string nombre, string creador, int fecha) {
     // Insertar la nueva playlist al inicio de la lista.
     newPlaylist->siguiente = primerP;
     primerP = newPlaylist;
+    cout << "¡Playlist agregada exitosamente!"<<endl;
 }
 /*
 Modifica el nombre de una playlist existente.
@@ -1246,6 +1274,7 @@ void modificarNombrePlaylist(string id, string name) {
         cout << "La playlist no existe" << endl;
     } else {
         playlist->nombre = name; // Actualizar el nombre de la playlist.
+        cout << "¡El nombre de la playlist ha sido modificada exitosamente!"<<endl;
     }
 }
 /*
@@ -1265,6 +1294,7 @@ void modificarCreadorPlaylist(string id, string creator) {
         cout << "La playlist no existe" << endl;
     } else {
         playlist->creador = creator; // Actualizar el creador de la playlist.
+        cout << "¡El nombre de la playlist ha sido modificado!"<<endl;
     }
 }
 /*
@@ -2046,25 +2076,24 @@ Inputs para Menú de Mantenimiento
 
 void inputInsertarCancion() {
     string idArtista, idAlbum;
-    
-    cout << "Ingrese el ID del artista: " << endl;
-    cin >> idArtista;
 
-    cout << "Ingrese el ID del álbum: " << endl;
-    cin >> idAlbum;
+    cout << "Ingrese el ID del artista: ";
+    getline(cin >> ws, idArtista);
 
-    insertarCancion(idArtista,idAlbum);
+    cout << "Ingrese el ID del álbum: ";
+    getline(cin, idAlbum);
 
-    
+    insertarCancion(idArtista, idAlbum);
+    cout << endl;
 }
 
 void inputModificarTituloCancion() {
     string idArtista, idAlbum, idCancion, nuevoTitulo;
 
     cout << "Ingrese el ID del artista: ";
-    getline(cin, idArtista);
+    getline(cin >> ws, idArtista);
 
-    cout << "Ingrese el ID del album: ";
+    cout << "Ingrese el ID del álbum: ";
     getline(cin, idAlbum);
 
     cout << "Ingrese el ID de la canción a modificar: ";
@@ -2081,9 +2110,9 @@ void inputEliminarCancion() {
     string idArtista, idAlbum, idCancion;
 
     cout << "Ingrese el ID del artista: ";
-    getline(cin, idArtista);
+    getline(cin >> ws, idArtista);
 
-    cout << "Ingrese el ID del album: ";
+    cout << "Ingrese el ID del álbum: ";
     getline(cin, idAlbum);
 
     cout << "Ingrese el ID de la canción a eliminar: ";
@@ -2093,14 +2122,13 @@ void inputEliminarCancion() {
     cout << endl;
 }
 
-/*Inputs para Artistas*/
 
+/*Inputs para Artistas*/
 void inputInsertarArtista() {
     string id, nombreArt, nombreReal, pais, selloDisc;
 
     cout << "Ingrese el ID del artista: ";
-    cin >> id;
-    cin.ignore(); 
+    getline(cin >> ws, id);
 
     cout << "Ingrese el nombre artístico del artista: ";
     getline(cin, nombreArt);
@@ -2118,71 +2146,65 @@ void inputInsertarArtista() {
     cout << endl;
 }
 
-void inputModificarNombreArtistico(){
-    string ID,nombre;
+void inputModificarNombreArtistico() {
+    string ID, nombre;
 
     cout << "Ingrese el ID del artista: ";
-    cin >> ID;
-    cin.ignore();
+    getline(cin >> ws, ID);
 
-    cout << "Ingrese el nuevo nombre artistico del artista: ";
-    getline(cin,nombre);
+    cout << "Ingrese el nuevo nombre artístico del artista: ";
+    getline(cin, nombre);
 
-    modificarNombreArtisticoDeArtista(ID,nombre);
-    cout <<endl;
-}
-
-void inputModificarPaisDeArtista(){
-    string ID,pais;
-
-    cout << "Ingrese el ID del artista: ";
-    cin >> ID;
-    cin.ignore();
-
-    cout << "Ingrese el nuevo país del artista: ";
-    getline(cin,pais);
-
-    modificarPaisDeArtista(ID,pais);
+    modificarNombreArtisticoDeArtista(ID, nombre);
     cout << endl;
 }
 
-void inputModificarSelloDiscográficoArtista(){
+void inputModificarPaisDeArtista() {
+    string ID, pais;
+
+    cout << "Ingrese el ID del artista: ";
+    getline(cin >> ws, ID);
+
+    cout << "Ingrese el nuevo país del artista: ";
+    getline(cin, pais);
+
+    modificarPaisDeArtista(ID, pais);
+    cout << endl;
+}
+
+void inputModificarSelloDiscograficoArtista() {
     string idArtista, idSello;
 
     cout << "Ingrese el ID del artista: ";
-    cin >> idArtista;
+    getline(cin >> ws, idArtista);
 
     cout << "Ingrese el ID del sello discográfico: ";
-    cin >> idSello;
+    getline(cin, idSello);
 
-    modificarSelloDiscograficoDeArtista(idArtista,idSello);
-    cout <<endl;
+    modificarSelloDiscograficoDeArtista(idArtista, idSello);
+    cout << endl;
 }
 
-void inputEliminarArtista(){
+void inputEliminarArtista() {
     string ID;
 
     cout << "Ingrese el ID del artista: ";
-    cin >> ID;
+    getline(cin >> ws, ID);
 
     eliminarArtista(ID);
-    cout<<endl;
+    cout << endl;
 }
 
 /*Inputs para albumes*/
-
-
 void inputInsertarAlbum() {
     string idArtista, idAlbum, titulo;
     int year, numCanciones;
 
     cout << "Ingrese el ID del artista: ";
-    cin >> idArtista;
-    cin.ignore();
+    getline(cin >> ws, idArtista);
 
     cout << "Ingrese el ID del álbum: ";
-    cin >> idAlbum;
-    cin.ignore();
+    getline(cin >> ws, idAlbum);
 
     cout << "Ingrese el título del álbum: ";
     getline(cin, titulo);
@@ -2190,13 +2212,12 @@ void inputInsertarAlbum() {
     while (true) {
         cout << "Ingrese el año de lanzamiento del álbum: ";
         cin >> year;
-
         if (cin.fail() || year <= 0) {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "El año es inválido, intente nuevamente." << endl;
         } else {
-            cin.ignore();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             break;
         }
     }
@@ -2204,12 +2225,12 @@ void inputInsertarAlbum() {
     while (true) {
         cout << "Ingrese el número de canciones del álbum: ";
         cin >> numCanciones;
-
         if (cin.fail() || numCanciones <= 0) {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "El número de canciones es inválido, intente nuevamente." << endl;
         } else {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             break;
         }
     }
@@ -2218,17 +2239,14 @@ void inputInsertarAlbum() {
     cout << endl;
 }
 
-
 void inputModificarTituloAlbum() {
     string idArtista, idAlbum, nuevoTitulo;
 
     cout << "Ingrese el ID del artista: ";
-    cin >> idArtista;
-    cin.ignore();
+    getline(cin >> ws, idArtista);
 
     cout << "Ingrese el ID del álbum: ";
-    cin >> idAlbum;
-    cin.ignore();
+    getline(cin >>ws, idAlbum);
 
     cout << "Ingrese el nuevo título del álbum: ";
     getline(cin, nuevoTitulo);
@@ -2237,257 +2255,262 @@ void inputModificarTituloAlbum() {
     cout << endl;
 }
 
-void inputEliminarAlbum(){
+void inputEliminarAlbum() {
     string idArtista, idAlbum;
 
     cout << "Ingrese el ID del artista: ";
-    cin >> idArtista;
-    
-    cout << "Ingrese el ID del álbum: ";
-    cin >> idAlbum;
+    getline(cin >> ws, idArtista);
 
-    eliminarAlbum(idArtista,idAlbum);
-    cout <<endl;
-    
+    cout << "Ingrese el ID del álbum: ";
+    getline(cin, idAlbum);
+
+    eliminarAlbum(idArtista, idAlbum);
+    cout << endl;
 }
 
-/*Inputs generos musicales*/
-void inputInsertarGenerosMusicales(){
+void inputInsertarGenerosMusicales() {
     string ID, nombre, descripcion;
 
     cout << "Ingrese el ID del género musical: ";
-    cin >> ID;
-    cin.ignore();
+    getline(cin >> ws, ID);
 
     cout << "Ingrese el nombre del género musical: ";
-    getline(cin,nombre);
+    getline(cin, nombre);
 
-    cout << "Ingrese una descripcion del género musical: ";
-    getline(cin,descripcion);
+    cout << "Ingrese una descripción del género musical: ";
+    getline(cin, descripcion);
 
-    insertarGeneroMusical(ID,nombre,descripcion);
+    insertarGeneroMusical(ID, nombre, descripcion);
     cout << endl;
-
 }
 
-void inputModificarDescripcionGeneroMusical(){
+void inputModificarDescripcionGeneroMusical() {
     string ID, descripcion;
+
     cout << "Ingrese el ID del género musical: ";
-    cin >> ID;
-    cin.ignore();
+    getline(cin >> ws, ID);
 
-    cout << "Ingrese una descripcion del género musical: ";
-    getline(cin,descripcion);
+    cout << "Ingrese una descripción del género musical: ";
+    getline(cin, descripcion);
 
-    modificarDescripcionGeneroMusical(ID,descripcion);
-    cout << endl;  
+    modificarDescripcionGeneroMusical(ID, descripcion);
+    cout << endl;
 }
 
-void inputEliminarGeneroMusical(){
+void inputEliminarGeneroMusical() {
     string ID;
+
     cout << "Ingrese el ID del género musical: ";
-    cin >> ID;
+    getline(cin >> ws, ID);
 
     eliminarGeneroMusical(ID);
     cout << endl;
 }
-
 /*Input Sello Discográfico*/
-
-void inputInsertarSelloDiscografico(){
-    string id,nombre,pais;
+void inputInsertarSelloDiscografico() {
+    string id, nombre, pais;
     int year;
 
     cout << "Ingrese el ID del sello discográfico: ";
-    cin >> id;
-    cin.ignore();
+    getline(cin >> ws, id);
 
     cout << "Ingrese el nombre del sello discográfico: ";
-    getline(cin,nombre);
+    getline(cin, nombre);
 
     cout << "Ingrese el país del sello discográfico: ";
-    getline(cin,pais);
+    getline(cin, pais);
 
-    cout << "Ingrese el año de fundación: ";
-    cin >> year;
-    if (year <= 0){
-        cout << "El año ingresado es inválido, intente de nuevo"<<endl;
+    while (true) {
+        cout << "Ingrese el año de fundación: ";
+        cin >> year;
+        if (cin.fail() || year <= 0) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "El año ingresado es inválido, intente de nuevo." << endl;
+        } else {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            break;
+        }
     }
 
-    insertarSellosDiscograficos(id,nombre,pais,year);
-    
+    insertarSellosDiscograficos(id, nombre, pais, year);
+    cout << endl;
 }
 
-void inputModificarNombredeSello(){
+void inputModificarNombredeSello() {
     string id, newNombre;
 
     cout << "Ingrese el ID del sello discográfico: ";
-    cin >> id;
-    cin.ignore();
+    getline(cin >> ws, id);
 
     cout << "Ingrese el nuevo nombre del sello discográfico: ";
-    getline(cin,newNombre);
+    getline(cin, newNombre);
 
-    modificarNombredeSello(id,newNombre);
+    modificarNombredeSello(id, newNombre);
     cout << endl;
 }
 
-void inputModificarPaisdeSello(){
+void inputModificarPaisdeSello() {
     string id, newPais;
 
     cout << "Ingrese el ID del sello discográfico: ";
-    cin >> id;
-    cin.ignore();
+    getline(cin >> ws, id);
 
     cout << "Ingrese el nuevo país del sello discográfico: ";
-    getline(cin,newPais);
+    getline(cin, newPais);
 
-    modificarPaisdeSello(id,newPais);
+    modificarPaisdeSello(id, newPais);
     cout << endl;
 }
 
-void inputEliminarSelloDiscografico(){
+void inputEliminarSelloDiscografico() {
     string id;
+
     cout << "Ingrese el ID del sello discográfico: ";
-    cin >> id;
+    getline(cin >> ws, id);
 
     eliminarSelloDiscografico(id);
     cout << endl;
 }
 
-void inputInsertarArtistaEnSello(){
+void inputInsertarArtistaEnSello() {
     string idArtista, idSello;
 
     cout << "Ingrese el ID del artista que desea agregar: ";
-    cin >> idArtista;
+    getline(cin >> ws, idArtista);
 
     cout << "Ingrese el ID del sello discográfico: ";
-    cin >> idSello;
+    getline(cin >> ws, idSello);
 
-    insertarArtistaEnSello(idArtista,idSello);
+    insertarArtistaEnSello(idArtista, idSello);
     cout << endl;
 }
 
-void inputEliminarArtistaDeSello(){
+void inputEliminarArtistaDeSello() {
     string idArtista, idSello;
 
-    cout << "Ingrese el ID del artista que desea agregar: ";
-    cin >> idArtista;
+    cout << "Ingrese el ID del artista que desea eliminar: ";
+    getline(cin >> ws, idArtista);
 
     cout << "Ingrese el ID del sello discográfico: ";
-    cin >> idSello;
+    getline(cin >> ws, idSello);
 
-    eliminarArtistaDeSello(idArtista,idSello);
+    eliminarArtistaDeSello(idArtista, idSello);
     cout << endl;
 }
+
 
 /*Inputs para Playlist*/
-void inputAgregarPlaylist(){
-    string id, nombre,creador;
+void inputAgregarPlaylist() {
+    string id, nombre, creador;
     int fecha;
 
     cout << "Ingrese el id de la playlist: ";
-    cin >> id;
-    cin.ignore();
+    getline(cin >> ws, id);
 
     cout << "Ingrese el nombre de la playlist: ";
-    getline(cin,nombre);
+    getline(cin, nombre);
 
     cout << "Ingrese el nombre de su creador: ";
-    getline(cin,creador);
+    getline(cin, creador);
 
-    cout << "Ingrese la fecha de creación: ";
-    cin >> fecha;
+    while (true) {
+        cout << "Ingrese la fecha de creación: ";
+        cin >> fecha;
+        if (cin.fail() || fecha <= 0) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Fecha inválida, intente nuevamente." << endl;
+        } else {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            break;
+        }
+    }
 
-    agregarPlaylist(id,nombre,creador,fecha);
+    agregarPlaylist(id, nombre, creador, fecha);
     cout << endl;
 }
 
-void inputModificarNombrePlaylist(){
-    string ID,nombre;
+void inputModificarNombrePlaylist() {
+    string ID, nombre;
 
     cout << "Ingrese el id de la playlist: ";
-    cin >> ID;
-    cin.ignore();
+    getline(cin >> ws, ID);
 
-    cout << "Ingrese el nombre de la playlist: ";
-    getline(cin,nombre);
+    cout << "Ingrese el nuevo nombre de la playlist: ";
+    getline(cin, nombre);
 
-    modificarNombrePlaylist(ID,nombre);
-    cout <<endl;
-}
-
-void inputModificarCreadorPlaylist(){
-    string ID,creador;
-
-    cout << "Ingrese el id de la playlist: ";
-    cin >> ID;
-    cin.ignore();
-
-    cout << "Ingrese el nombre de su creador: ";
-    getline(cin,creador);
-
-    modificarCreadorPlaylist(ID,creador);
+    modificarNombrePlaylist(ID, nombre);
     cout << endl;
 }
 
-void inputEliminarPlaylist(){
+void inputModificarCreadorPlaylist() {
+    string ID, creador;
+
+    cout << "Ingrese el id de la playlist: ";
+    getline(cin >> ws, ID);
+
+    cout << "Ingrese el nuevo nombre del creador: ";
+    getline(cin, creador);
+
+    modificarCreadorPlaylist(ID, creador);
+    cout << endl;
+}
+
+void inputEliminarPlaylist() {
     string ID;
+
     cout << "Ingrese el id de la playlist: ";
-    cin >> ID;
-    
+    getline(cin >> ws, ID);
+
     eliminarPlaylist(ID);
     cout << endl;
 }
-
-
 /*
 Inputs para Menú de Consulta
 */
 void inputCancionesPublicadasYear() {
     int input = 0;
-    bool validacion = false;
 
-    while (!validacion) {
+    while (true) {
         cout << "Ingrese un año: ";
         cin >> input;
-        cout << endl;
 
-        if (input >= 0) {
-            validacion = true;
-        }
-
-        else {
+        if (cin.fail() || input < 0) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "Inválido. Solo se permiten números positivos." << endl;
             cout << "Intente nuevamente." << endl;
+        } else {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            break;
         }
     }
 
     cancionesPublicadasYear(input);
 }
 
+
 void inputAlbumesCantidadCanciones() {
     int input = 0;
-    bool validacion = false;
 
-    while (!validacion) {
+    while (true) {
         cout << "Ingrese un número: ";
         cin >> input;
-        cout << endl;
 
-        if (input >= 0) {
-            validacion = true;
-        }
-
-        else {
+        if (cin.fail() || input < 0) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "Inválido. Solo se permiten números positivos." << endl;
             cout << "Intente nuevamente." << endl;
+        } else {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            break;
         }
     }
 
     albumesCantidadCanciones(input);
 }
-
 /*
 ========
 MENÚS
@@ -2543,7 +2566,7 @@ void menuArtistas() {
                 case 1: inputInsertarArtista(); break;
                 case 2: inputModificarNombreArtistico(); break;
                 case 3: inputModificarPaisDeArtista(); break;
-                case 4: inputModificarSelloDiscográficoArtista(); break;
+                case 4: inputModificarSelloDiscograficoArtista(); break;
                 case 5: inputEliminarArtista(); break;
                 case 6: salir = true; break;
                 default: cout << "Instrucción inválida. Intente nuevamente." << endl;
@@ -2594,7 +2617,7 @@ void menuGenerosMusicales() {
         cout << endl;
 
         switch(opcion){
-            case 1: inputInsertarGenerosMusicales; break;
+            case 1: inputInsertarGenerosMusicales(); break;
             case 2: inputModificarDescripcionGeneroMusical(); break;
             case 3: inputEliminarGeneroMusical(); break;
             case 4: salir = true; break;
@@ -2857,8 +2880,8 @@ void cargarDatos(){
     insertarArtistaOrdenAlfabeticamente("ART6", "Adele", "Adele Laurie Blue Adkins", "Reino Unido", "Columbia Records");
     insertarArtistaOrdenAlfabeticamente("ART7", "Ed Sheeran", "Edward Christopher Sheeran", "Reino Unido", "Atlantic Records");
     insertarArtistaOrdenAlfabeticamente("ART8", "Imagine Dragons", "Imagine Dragons", "Estados Unidos", "Island Records");
-    insertarArtistaOrdenAlfabeticamente("ART9", "Coldplay", "Coldplay", "Reino Unido", "EMI Records");
-    insertarArtistaOrdenAlfabeticamente("ART10", "Bruno Mars", "Peter Gene Hernandez", "Estados Unidos", "Atlantic Records");
+    insertarArtistaOrdenAlfabeticamente("ART9", "Coldplay", "Coldplay", "Reino Unido", "Columbia Records");
+    insertarArtistaOrdenAlfabeticamente("ART10", "Bruno Mars", "Peter Gene Hernandez", "Estados Unidos", "Motown Records");
 
 
     insertarFinalAlbum("ART1", "ALB1", "Happier Than Ever", 2021, 4);// Billie Eilish
@@ -2875,7 +2898,7 @@ void cargarDatos(){
     // insertarCancion("ART1", "ALB1");  // Billie Eilish
     // insertarCancion("ART2", "ALB2");  // Taylor Swift
     // insertarCancion("ART3", "ALB3");  // Drake
-    // insertarCancion("ART4", "ALB4");  // Dua Lipa
+    // insertarCancion("ART4", "ALB4");  // Dua LipaS
     // insertarCancion("ART5", "ALB5");  // The Weeknd
     // insertarCancion("ART6", "ALB6");  // Adele
     // insertarCancion("ART7", "ALB7");  // Ed Sheeran
