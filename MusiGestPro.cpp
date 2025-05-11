@@ -109,7 +109,9 @@ struct Playlist {
     string id; //ID de la playlist.
     string nombre; //Nombre de la playlist.
     string creador; //Creador de la playlist.
-    int fecha; //Fecha de creación de la playlist.
+    int dia; //Día de lanzamiento.
+    int mes; //Mes de lanzamiento.
+    int year; //Año de lanzamiento.
 
     Playlist *siguiente; //Puntero a la siguiente playlist.
 
@@ -117,11 +119,13 @@ struct Playlist {
     struct Canciones *canciones; //Puntero a la sublista de canciones de una playlist.
 
     /* CONSTRUCTOR */
-    Playlist(string idP, string nombreP, string creadorP, int fechaP) {
+    Playlist(string idP, string nombreP, string creadorP, int diaP,int mesP,int yearP) {
         id = idP;
         nombre = nombreP;
         creador = creadorP;
-        fecha = fechaP;
+        dia = diaP;
+        mes = mesP;
+        year = yearP;
         siguiente = NULL;
         canciones = NULL;
     }
@@ -470,84 +474,60 @@ void eliminarArtistaDeSello(string idArtista, string idSelloDisc) {
 CANCIONES
 =========
 */
-/*
-Inserta nuevas canciones en el álbum de un artista hasta alcanzar el número de canciones requerido para el álbum.
-Recibe como parámetros el ID del artista y el ID del álbum. Luego, solicita al usuario los datos de cada canción (ID, título, duración y año).
-Si el artista o el álbum no existen, muestra un mensaje de error.
-Si la canción ya existe en el álbum, muestra un mensaje indicando que la canción ya está registrada.
-Si la duración o el año de la canción es negativo, solicita nuevamente los datos hasta que sean válidos.
-Las canciones se añaden al inicio de la lista de canciones del álbum.
-*/ 
-void insertarCancion(string idArtista, string idAlbum) {
-    Artistas* nodoArtista = buscarArtistas(idArtista);
-    Albumes* nodoAlbum = buscarAlbumes(idArtista, idAlbum);
+//Recorre un album y retorna la cantidad de canciones que tenga ese album.
+int cantidadCancionesAlbum(Albumes *nodoAlbum){
+    Canciones *temp = nodoAlbum ->canciones;
+    int cont = 0;
+    while (temp != NULL){
+        cont++;
+        temp = temp -> siguiente;
+    }
+    return cont;
 
-    if (nodoArtista == NULL) {
+}
+/*
+Inserta una nueva canción en la lista de un álbum de un artista. Recibe el ID del artista,
+el ID del álbum, el ID y el título de la canción, la duración en segundos y el año de lanzamiento.
+Verifica que tanto el artista como el álbum existan y comprueba que no haya ya otra canción  con el mismo ID o con el mismo título en ese álbum antes de crearla y añadirla al inicio de la lista.
+Tras la inserción se actualiza el contador de canciones del álbum y se muestra un mensaje de confirmación.
+*/ 
+void insertarCancion(string idArtista,string idAlbum, string idCancion, string titulo,int duracion, int year) {
+    Artistas* nodoArtista = buscarArtistas(idArtista);
+    if (!nodoArtista) {
         cout << "El artista con el ID " << idArtista << " no existe." << endl;
         return;
     }
 
-    if (nodoAlbum == NULL) {
+    Albumes* nodoAlbum = buscarAlbumes(idArtista, idAlbum);
+    if (!nodoAlbum) {
         cout << "El álbum con el ID " << idAlbum << " no existe." << endl;
         return;
     }
 
-    string idCancion, titulo;
-    int duracion, year;
-    char continuar;
-
-    do {
-        cout << "Ingrese el ID de la canción: ";
-        getline(cin >> ws, idCancion);
-
-        Canciones* nodoCancion = buscarCancion(idArtista, idAlbum, idCancion);
-        if (nodoCancion != NULL) {
-            cout << "La canción con el ID " << idCancion << " ya existe en este álbum." << endl;
-            continue;
+    // Verificar si la canción ya existe
+    Canciones* nodoCancion = buscarCancion(idArtista, idAlbum, idCancion);
+    if (nodoCancion) {
+        cout << "La canción con el ID " << idCancion << " ya existe en este álbum." << endl;
+        return;
+    }
+    // Verificar duplicado por título
+    Canciones* tmp = nodoAlbum->canciones;
+    while (tmp != nullptr) {
+        if (tmp->titulo == titulo) {
+            cout << "Ya existe una canción con el título \"" << titulo << "\" en este álbum." << endl;
+            return;
         }
+        tmp = tmp->siguiente;
+    }
 
-        cout << "Ingrese el título de la canción: ";
-        getline(cin >> ws, titulo);
+    // Crear y enlazar la nueva canción
+    Canciones* nuevaCancion = new Canciones(idCancion, titulo, duracion, year, idArtista, idAlbum);
+    nuevaCancion->siguiente = nodoAlbum->canciones;
+    nodoAlbum->canciones = nuevaCancion;
 
-        cout << "Ingrese la duración de la canción (en segundos): ";
-        while (true) {
-            cin >> duracion;
-            if (cin.fail() || duracion < 0) {
-                cin.clear();
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                cout << "Entrada no válida. Ingrese un número entero no negativo: ";
-            } else {
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                break;
-            }
-        }
+    nodoAlbum->numeroCanciones = cantidadCancionesAlbum(nodoAlbum);
 
-        cout << "Ingrese el año de la canción: ";
-        while (true) {
-            cin >> year;
-            if (cin.fail() || year < 0) {
-                cin.clear();
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                cout << "Entrada no válida. Ingrese un número entero no negativo: ";
-            } else {
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                break;
-            }
-        }
-
-        Canciones* nuevaCancion = new Canciones(idCancion, titulo, duracion, year, idArtista, idAlbum);
-        nuevaCancion->siguiente = nodoAlbum->canciones;
-        nodoAlbum->canciones = nuevaCancion;
-        nodoAlbum->numeroCanciones++;
-
-        cout << "La canción \"" << titulo << "\" fue agregada correctamente al álbum con ID " << idAlbum << "." << endl;
-
-        cout << "¿Desea agregar otra canción? (s/n): ";
-        cin >> continuar;
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    } while (continuar == 's' || continuar == 'S');
-
-    cout << "¡Canciones agregadas exitosamente!" << endl;
+    cout << "La canción \"" << titulo << "\" fue agregada correctamente al álbum con ID "   << idAlbum << "." << endl;
 }
 
 /*
@@ -600,6 +580,7 @@ void modificarTituloCancion(string idArtista, string idAlbum, string idCancion, 
     // Mensaje de éxito.
     cout << "El título de la canción " << tituloAntiguo << " ha sido cambiado por " << nuevoTitulo << " exitosamente." << endl;
 }
+
 /*
 Elimina una canción de un álbum que pertenece a un artista.
 Parámetros:
@@ -677,7 +658,7 @@ void insertarFinalAlbum(string idArtista, string idAlbum, string titulo, int yea
         return;
     }
     if (buscarAlbumesPorNombre(idArtista,titulo) != NULL){
-        cout << "El título del album ya está registrado en el artista"<<endl;   
+        cout << "El título del album ya está registrado en el artista"<<endl;       
     }
 
     // Crear el nuevo álbum.
@@ -1237,14 +1218,14 @@ Si ya existe una playlist con el mismo ID, muestra un mensaje de error.
 Si la lista de playlists está vacía, la nueva playlist se convierte en la primera.
 Si no, la nueva playlist se inserta al inicio de la lista.
 */
-void agregarPlaylist(string id, string nombre, string creador, int fecha) {
+void agregarPlaylist(string id, string nombre, string creador, int dia,int mes,int year) {
     Playlist* nodoPlaylist = buscarPlaylist(id); // Buscar la playlist por ID.
     if (nodoPlaylist != NULL) { // Verificar si la playlist ya existe.
         cout << "La playlist con ID: " << nodoPlaylist->id << " ya existe" << endl;
         return;
     }
 
-    Playlist* newPlaylist = new Playlist(id, nombre, creador, fecha); // Crear la nueva playlist.
+    Playlist* newPlaylist = new Playlist(id, nombre, creador, dia,mes,year); // Crear la nueva playlist.
 
     // Si la lista de playlists está vacía, la nueva playlist se convierte en la primera.
     if (primerP == NULL) {
@@ -1859,7 +1840,7 @@ void imprimirListaPlaylists() {
         cout << "ID de la playlist: " << playlist->id << endl;
         cout << "Nombre de la playlist: " << playlist->nombre << endl;
         cout << "Creador de la playlist: " << playlist->creador << endl;
-        cout << "Fecha de creación: " << playlist->fecha << endl;
+        cout << "Fecha de creación: " << playlist-> dia << " / " << playlist -> mes << " / " << playlist -> year<<endl;
 
         if (playlist->canciones != NULL) {
             Canciones *cancion = playlist->canciones;
@@ -2076,15 +2057,53 @@ Inputs para Menú de Mantenimiento
 
 void inputInsertarCancion() {
     string idArtista, idAlbum;
-
     cout << "Ingrese el ID del artista: ";
     getline(cin >> ws, idArtista);
 
     cout << "Ingrese el ID del álbum: ";
     getline(cin, idAlbum);
 
-    insertarCancion(idArtista, idAlbum);
-    cout << endl;
+    char continuar;
+    do {
+        string idCancion, titulo;
+        int duracion, year;
+
+        // ID de la canción
+        cout << "Ingrese el ID de la canción: ";
+        getline(cin >> ws, idCancion);
+
+        // Título
+        cout << "Ingrese el título de la canción: ";
+        getline(cin >> ws, titulo);
+
+        // Duración
+        cout << "Ingrese la duración de la canción (en segundos): ";
+        while (!(cin >> duracion) || duracion < 0) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Entrada no válida. Ingrese un número entero no negativo: ";
+        }
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        // Año
+        cout << "Ingrese el año de la canción: ";
+        while (!(cin >> year) || year < 0) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Entrada no válida. Ingrese un número entero no negativo: ";
+        }
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        // Llamada con todos los parámetros recogidos
+        insertarCancion(idArtista, idAlbum, idCancion, titulo, duracion, year);
+
+        // Preguntar si quiere agregar otra
+        cout << "¿Desea agregar otra canción? (s/n): ";
+        cin >> continuar;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    } while (continuar == 's' || continuar == 'S');
+
+    cout << "\n¡Canciones agregadas exitosamente!" << endl;
 }
 
 void inputModificarTituloCancion() {
@@ -2403,33 +2422,57 @@ void inputEliminarArtistaDeSello() {
 /*Inputs para Playlist*/
 void inputAgregarPlaylist() {
     string id, nombre, creador;
-    int fecha;
+    int dia, mes, year;
 
     cout << "Ingrese el id de la playlist: ";
     getline(cin >> ws, id);
 
     cout << "Ingrese el nombre de la playlist: ";
-    getline(cin, nombre);
+    getline(cin >> ws, nombre);
 
     cout << "Ingrese el nombre de su creador: ";
-    getline(cin, creador);
+    getline(cin >> ws, creador);
 
+    // Validar día
     while (true) {
-        cout << "Ingrese la fecha de creación: ";
-        cin >> fecha;
-        if (cin.fail() || fecha <= 0) {
+        cout << "Ingrese el día de creación (1-31): ";
+        if (!(cin >> dia) || dia < 1 || dia > 31) {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Fecha inválida, intente nuevamente." << endl;
+            cout << "Día inválido, intente nuevamente." << endl;
         } else {
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             break;
         }
     }
 
-    agregarPlaylist(id, nombre, creador, fecha);
-    cout << endl;
+    // Validar mes
+    while (true) {
+        cout << "Ingrese el mes de creación (1-12): ";
+        if (!(cin >> mes) || mes < 1 || mes > 12) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Mes inválido, intente nuevamente." << endl;
+        } else {
+            break;
+        }
+    }
+
+    // Validar año
+    while (true) {
+        cout << "Ingrese el año de creación (> 0): ";
+        if (!(cin >> year) || year < 1 || year > 2025) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Año inválido, intente nuevamente." << endl;
+        } else {
+            break;
+        }
+    }
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    agregarPlaylist(id, nombre, creador, dia, mes, year);
 }
+
 
 void inputModificarNombrePlaylist() {
     string ID, nombre;
@@ -2850,16 +2893,16 @@ void cargarDatos(){
     insertarGeneroMusical("GNM9", "Country", "Género originario del sur de Estados Unidos, con letras sobre la vida cotidiana y uso frecuente de guitarras acústicas.");  
     insertarGeneroMusical("GNM10", "Metal", "Género derivado del rock, caracterizado por guitarras distorsionadas, ritmos potentes y letras intensas.");  
    
-    agregarPlaylist("PL10", "Canciones Divertidas", "Alberto_elMejor1234", 23042022);
-    agregarPlaylist("PL11", "Rock Clásico", "JuanRockero89", 15052021);
-    agregarPlaylist("PL12", "Pop Latino", "MusicaLatina2022", 10122023);
-    agregarPlaylist("PL13", "Relax y Meditación", "SerenidadTotal", 17082020);
-    agregarPlaylist("PL14", "Electro Hits", "DJ_Manuel", 25062019);
-    agregarPlaylist("PL15", "Indie Vibes", "AuroraMusic", 12072022);
-    agregarPlaylist("PL16", "Baladas Románticas", "CorazonMelodico", 14022021);
-    agregarPlaylist("PL17", "Jazz & Blues", "BlueSoul", 30112020);
-    agregarPlaylist("PL18", "Clásicos de los 80s", "RetroWave", 8031990);
-    agregarPlaylist("PL19", "Workout Power", "FitLife2023", 01012023);
+    agregarPlaylist("PL10", "Canciones Divertidas", "Alberto_elMejor1234", 23,04,22);
+    agregarPlaylist("PL11", "Rock Clásico", "JuanRockero89", 15,05,2021);
+    agregarPlaylist("PL12", "Pop Latino", "MusicaLatina2022", 10,12,2023);
+    agregarPlaylist("PL13", "Relax y Meditación", "SerenidadTotal", 17,8,2020);
+    agregarPlaylist("PL14", "Electro Hits", "DJ_Manuel", 25,06,2019);
+    agregarPlaylist("PL15", "Indie Vibes", "AuroraMusic", 12,07,2022);
+    agregarPlaylist("PL16", "Baladas Románticas", "CorazonMelodico", 14,02,2021);
+    agregarPlaylist("PL17", "Jazz & Blues", "BlueSoul", 30,11,2020);
+    agregarPlaylist("PL18", "Clásicos de los 80s", "RetroWave", 8,12,1990);
+    agregarPlaylist("PL19", "Workout Power", "FitLife2023", 01,01,2023);
 
     insertarSellosDiscograficos("SLL1", "Warner Records", "Estados Unidos", 2024);
     insertarSellosDiscograficos("SLL2", "Sony Music", "Japón", 2020);
@@ -2895,17 +2938,17 @@ void cargarDatos(){
     insertarFinalAlbum("ART9", "ALB9", "Music of the Spheres", 2021, 4); // Coldplay
     insertarFinalAlbum("ART10", "ALB10", "24K Magic", 2016, 4);// Bruno Mars
 
-    // insertarCancion("ART1", "ALB1");  // Billie Eilish
-    // insertarCancion("ART2", "ALB2");  // Taylor Swift
-    // insertarCancion("ART3", "ALB3");  // Drake
-    // insertarCancion("ART4", "ALB4");  // Dua LipaS
-    // insertarCancion("ART5", "ALB5");  // The Weeknd
-    // insertarCancion("ART6", "ALB6");  // Adele
-    // insertarCancion("ART7", "ALB7");  // Ed Sheeran
-    // insertarCancion("ART8", "ALB8");  // Imagine Dragons
-    // insertarCancion("ART9", "ALB9");  // Coldplay
-    // insertarCancion("ART10", "ALB10");  // Bruno Mars
-}
+    insertarCancion("ART1", "ALB1","ALB1_01","Billie Bossa Novva",220,2021);  // Billie Eilish
+    insertarCancion("ART2",  "ALB2","ALB2_01", "Anti-Hero",200, 2022); // Taylor Swift
+    insertarCancion("ART3",  "ALB3","ALB3_01", "Way 2 Sexy",232, 2021); // Drake
+    insertarCancion("ART4",  "ALB4","ALB4_01", "Don't Start Now",183, 2020); // Dua Lipa
+    insertarCancion("ART5",  "ALB5","ALB5_01", "Blinding Lights",200, 2020); // The Weeknd
+    insertarCancion("ART6",  "ALB6","ALB6_01", "Easy On Me", 224, 2021); // Adele
+    insertarCancion("ART7",  "ALB7","ALB7_01", "Shape of You",233, 2017); // Ed Sheeran
+    insertarCancion("ART8",  "ALB8","ALB8_01", "Believer", 204, 2017); // Imagine Dragons
+    insertarCancion("ART9",  "ALB9","ALB9_01", "My Universe",241, 2021); // Coldplay
+    insertarCancion("ART10", "ALB10","ALB10_01","24K Magic", 227, 2016);
+ }
 
 
 
